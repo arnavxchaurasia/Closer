@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "OurSpace",
+    "slug": "soulsync",
+    "owner": "mait1999",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "soulsync",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.soulsync.app"
+    },
+    "android": {
+      "edgeToEdgeEnabled": false,
+      "package": "com.soulsync.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#E8607A"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#E8607A",
+          "sounds": [
+            "./assets/sounds/chime.wav"
+          ]
+        }
+      ],
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "backendUrl": "http://localhost:8001",
+      "router": {},
+      "eas": {
+        "projectId": "239967d0-a145-4b1c-bf5d-b801ec0f781e"
+      }
+    }
+  }
+}

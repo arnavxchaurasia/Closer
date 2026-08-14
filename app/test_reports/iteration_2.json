@@ -1,0 +1,48 @@
+{
+  "summary": "Executed four public backend auth/privacy regression tests and mobile Expo web smoke flow at 390x844.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Google sign-in visibility/callback",
+        "issue": "Google button was not checked before authentication because the script continued on the authenticated screen; callback was not exercised against Emergent.",
+        "affected_testIDs": [
+          "google-signin"
+        ]
+      }
+    ],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_soulsync_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Align frontend API configuration with the protected EXPO_BACKEND_URL contract; current code/env use EXPO_PUBLIC_BACKEND_URL and extra.backendUrl.",
+    "Make sharing control rows interactive if privacy settings are intended to be user-changeable; current Sync controls are display-only despite /api/sharing existing.",
+    "Run a dedicated unauthenticated Google/deep-link callback test with a valid Emergent session fixture."
+  ],
+  "critical_code_review_comments": [
+    "All tested protected APIs use opaque server sessions and sanitized users; no password hash was returned.",
+    "Frontend stores the token in web AsyncStorage through secure* helpers, which is not secure storage on browsers; this is an inherent web fallback and should be accepted only for preview, not treated as production secret storage.",
+    "Google OAuth is a real external integration, but was not mocked and could not be completed in this run without an external OAuth session."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_soulsync_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "success_rate": {
+    "backend": "100% (4/4)",
+    "frontend": "100% tested core flow (load, login, task create, Sync, overflow, console); Google callback not exercised"
+  },
+  "seed_data_creation": "Created TEST_-prefixed accounts/items/pair through regression tests; no seeded production records modified.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Public preview loaded at 390x844. Email login reached Today, task creation worked, Sync/sharing rendered, no horizontal overflow or console errors. Existing test account was read from test_credentials.md.",
+  "rca_of_issue": "Configuration mismatch: frontend/index.tsx constructs API from Constants.expoConfig.extra.backendUrl or EXPO_PUBLIC_BACKEND_URL, while the environment contract and review request name EXPO_BACKEND_URL. Preview succeeds only because EXPO_PUBLIC_BACKEND_URL is currently present. Google callback requires an actual Emergent OAuth session ID and was therefore not independently verified."
+}

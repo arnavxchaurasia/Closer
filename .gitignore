@@ -1,0 +1,12 @@
+node_modules/
+.expo/
+dist/
+android/
+ios/
+venv/
+__pycache__/
+*.pyc
+.env
+.env.local
+npm-debug.*
+*.log

@@ -1,0 +1,49 @@
+{
+  "app_name": "SoulSync Studio",
+  "archetype": "ORGANIC & EARTHY / LUXURY WARMTH",
+  "theme": "warm-rose-midnight",
+  "typography": {
+    "headings": "Playfair Display",
+    "body": "Inter / DM Sans",
+    "weights": ["300", "400", "500", "600", "700"]
+  },
+  "colors": {
+    "primary": "#E05676",
+    "primary_dark": "#B83B5E",
+    "background": "#0F1016",
+    "card_bg": "#1A1B26",
+    "text_main": "#F8F9FA",
+    "text_muted": "#9CA3AF",
+    "accent_gold": "#F0A500",
+    "accent_rose": "#FF7597",
+    "border_color": "rgba(255, 255, 255, 0.1)"
+  },
+  "key_features": [
+    "Couple Pairing via 6-character code and invite link",
+    "Google Sign-In & Dual Google Calendar Sync with Conflict Prevention",
+    "Shared Routines, Tasks, and Life Sync Board",
+    "Scenario Suggestion Delivery & Love Action Cards",
+    "My Calendar (Period & Partner Mode Tracker Integration)",
+    "Instagram & WhatsApp Secure Placeholder & Quick-Connect",
+    "Life Growth & Relationship Bond Builder (Milestones, Love Bank, Q&A)"
+  ],
+  "image_urls": [
+    {
+      "category": "hero_couple",
+      "url": "https://images.unsplash.com/photo-1521033719794-41049d18b8d4?q=85&w=1200",
+      "description": "Romantic silhouette during sunset"
+    },
+    {
+      "category": "couple_cozy",
+      "url": "https://images.unsplash.com/photo-1521033719794-41049d18b8d4?q=85&w=800",
+      "description": "Cozy couple atmosphere"
+    }
+  ],
+  "universal_guidelines": {
+    "interactive_elements": "Must include data-testid attributes for testing",
+    "styling": "No universal transition, use specific properties",
+    "accessibility": "High contrast text, WCAG AA compliant"
+  }
+}
+
+

@@ -1,0 +1,20 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "SoulSync Backend",
+      "runtimeExecutable": "/Users/arnavchaurasia/Documents/SoulSync/app/backend/.venv/bin/uvicorn",
+      "runtimeArgs": ["server:app", "--port", "8001"],
+      "port": 8001,
+      "cwd": "/Users/arnavchaurasia/Documents/SoulSync/app/backend"
+    },
+    {
+      "name": "SoulSync Frontend",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["expo", "start", "--web", "--port", "8082"],
+      "port": 8082,
+      "cwd": "/Users/arnavchaurasia/Documents/SoulSync/app/frontend",
+      "url": "http://localhost:8082"
+    }
+  ]
+}

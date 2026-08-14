@@ -1,0 +1,22 @@
+workflows:
+  android-apk:
+    name: Build Standalone Android APK
+    max_build_duration: 30
+    instance_type: mac_mini_m1
+    working_directory: app/frontend
+    environment:
+      node: 20.18.0
+    scripts:
+      - name: Install Dependencies
+        script: |
+          npm install
+      - name: Prebuild Native Android App
+        script: |
+          npx expo prebuild --platform android --clean
+      - name: Assemble Release APK
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
+    artifacts:
+      - app/frontend/android/app/build/outputs/apk/release/*.apk
