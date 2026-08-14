@@ -13,6 +13,18 @@ workflows:
       - name: Prebuild Native Android App
         script: |
           npx expo prebuild --platform android --clean
+      - name: Patch build.gradle for META-INF conflicts
+        script: |
+          cat >> android/app/build.gradle << 'EOF'
+
+          android {
+              packagingOptions {
+                  resources {
+                      excludes += ['META-INF/versions/9/OSGI-INF/MANIFEST.MF']
+                  }
+              }
+          }
+          EOF
       - name: Assemble Release APK
         script: |
           cd android
