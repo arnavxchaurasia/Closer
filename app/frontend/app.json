@@ -23,7 +23,7 @@
       "package": "com.soulsync.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#E8607A"
+        "backgroundColor": "#FFFFFF"
       }
     },
     "web": {

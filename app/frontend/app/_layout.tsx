@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
-import { ClerkProvider } from '@clerk/clerk-expo';
+import React, { useEffect, Component } from 'react';
+import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 import { Stack, router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import * as SplashScreen from 'expo-splash-screen';
-import { LogBox, Platform } from 'react-native';
+import { LogBox, Platform, Text, View } from 'react-native';
 
 import { LaunchScreen } from '@/src/components/LaunchScreen';
 import { AuthProvider, useAuth } from '@/src/context/AuthContext';
@@ -16,7 +16,7 @@ LogBox.ignoreAllLogs(true);
 
 SplashScreen.preventAutoHideAsync();
 
-const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? 'pk_test_demo';
+const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? '';
 
 const tokenCache = {
   async getToken(key: string) {
@@ -29,6 +29,31 @@ const tokenCache = {
     try { await SecureStore.deleteItemAsync(key); } catch {}
   },
 };
+
+// Error boundary to prevent white-screen crashes
+class ErrorBoundary extends Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: string }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false, error: '' };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error: error.message };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0F0818', padding: 24 }}>
+          <Text style={{ color: '#E8607A', fontSize: 20, fontWeight: '800', marginBottom: 12 }}>Something went wrong</Text>
+          <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14, textAlign: 'center' }}>{this.state.error}</Text>
+        </View>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 function RootNavigator() {
   const { user, isLoading } = useAuth();
@@ -47,8 +72,14 @@ function RootNavigator() {
 
   useEffect(() => {
     if (!ready) return;
-    if (!user) router.replace('/(auth)');
-    else router.replace('/(app)');
+    // Small delay to ensure router is fully mounted before navigating
+    const timer = setTimeout(() => {
+      try {
+        if (!user) router.replace('/(auth)');
+        else router.replace('/(app)');
+      } catch {}
+    }, 100);
+    return () => clearTimeout(timer);
   }, [ready, user]);
 
   if (!ready) return <LaunchScreen />;
@@ -65,15 +96,29 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
+  if (!CLERK_PUBLISHABLE_KEY) {
+    // Fallback if key is missing — show error instead of crashing
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0F0818', padding: 24 }}>
+        <Text style={{ color: '#E8607A', fontSize: 18, fontWeight: '800' }}>Missing Clerk Key</Text>
+        <Text style={{ color: 'rgba(255,255,255,0.5)', marginTop: 8 }}>EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY not set</Text>
+      </View>
+    );
+  }
+
   return (
-    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
-      <ThemeProvider>
-        <AuthProvider>
-          <CoupleProvider>
-            <RootNavigator />
-          </CoupleProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </ClerkProvider>
+    <ErrorBoundary>
+      <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+        <ClerkLoaded>
+          <ThemeProvider>
+            <AuthProvider>
+              <CoupleProvider>
+                <RootNavigator />
+              </CoupleProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </ClerkLoaded>
+      </ClerkProvider>
+    </ErrorBoundary>
   );
 }
