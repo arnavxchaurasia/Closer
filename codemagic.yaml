@@ -6,6 +6,9 @@ workflows:
     working_directory: app/frontend
     environment:
       node: 20.18.0
+      vars:
+        EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_YW11c2VkLWZlcnJldC0yMC5jbGVyay5hY2NvdW50cy5kZXYk"
+        EXPO_PUBLIC_BACKEND_URL: "https://ourspace-jd0i.onrender.com"
     scripts:
       - name: Install Dependencies
         script: |
