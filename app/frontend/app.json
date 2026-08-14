@@ -42,7 +42,8 @@
           ]
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      "./plugins/withMetaInfExclude"
     ],
     "experiments": {
       "typedRoutes": true
