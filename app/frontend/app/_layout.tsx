@@ -77,14 +77,19 @@ function RootNavigator() {
   const [fontsLoaded, fontsError] = useIconFonts();
 
   const ready = (fontsLoaded || fontsError) && !isLoading;
+  const fontsReady = fontsLoaded || !!fontsError;
 
   // showLaunch stays true briefly after ready so the exit animation can play
   const [showLaunch, setShowLaunch] = React.useState(true);
   const [exiting, setExiting] = React.useState(false);
 
+  // Hide native splash as soon as fonts load — don't wait for auth
+  useEffect(() => {
+    if (fontsReady) SplashScreen.hideAsync();
+  }, [fontsReady]);
+
   useEffect(() => {
     if (ready) {
-      SplashScreen.hideAsync();
       registerForPushNotifications().then(token => {
         if (token) scheduleDailyCheckIn().catch(() => {});
       }).catch(() => {});
