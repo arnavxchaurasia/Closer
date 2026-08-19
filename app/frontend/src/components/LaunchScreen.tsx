@@ -135,13 +135,12 @@ export function LaunchScreen({ exiting }: Props) {
           </Animated.View>
         </Animated.View>
 
-        {/* Brand name — JS driver for letterSpacing, native for opacity */}
-        <Animated.Text style={[styles.title, {
-          opacity: titleOpacity,
-          letterSpacing,
-        }]}>
-          ourspace
-        </Animated.Text>
+        {/* Brand name — native opacity on outer View, JS letterSpacing on Text */}
+        <Animated.View style={{ opacity: titleOpacity }}>
+          <Animated.Text style={[styles.title, { letterSpacing }]}>
+            ourspace
+          </Animated.Text>
+        </Animated.View>
 
         {/* Subtitle */}
         <Animated.View style={[styles.subtitleRow, { opacity: subtitleOpacity }]}>
