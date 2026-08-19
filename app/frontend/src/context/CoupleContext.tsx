@@ -22,6 +22,8 @@ export interface CoupleData {
   couple_id: string;
   members: CouplePartner[];
   created_at: string;
+  anniversary?: string;
+  together_since?: string;
 }
 
 export interface PartnerAvailability {

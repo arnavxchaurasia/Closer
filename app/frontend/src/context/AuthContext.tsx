@@ -69,23 +69,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (!cancelled) {
           setUser(mappedUser);
+          await storage.setItem('cached_user_profile', JSON.stringify(mappedUser));
           setIsLoading(false);
         }
         return;
       }
 
-      // Check legacy session storage if Clerk not signed in
+      // Check session storage if Clerk not signed in
       try {
         const token = await storage.secureGet('session_token', null);
+        const cachedUserStr = await storage.getItem('cached_user_profile', null);
+
+        if (cachedUserStr) {
+          try {
+            const cachedUser = JSON.parse(cachedUserStr as string);
+            if (!cancelled) setUser(cachedUser);
+          } catch {}
+        }
+
         if (!token) {
           if (!cancelled) { setUser(null); setIsLoading(false); }
           return;
         }
-        const me = await api.get<AuthUser>('/api/auth/me');
-        if (!cancelled) setUser(me);
+
+        // Re-verify with backend quietly; DO NOT wipe session on network glitches
+        try {
+          const me = await api.get<AuthUser>('/api/auth/me');
+          if (!cancelled) {
+            setUser(me);
+            await storage.setItem('cached_user_profile', JSON.stringify(me));
+          }
+        } catch (err: any) {
+          // ONLY clear session if server explicitly returned Unauthorized (401)
+          if (err?.message === 'Unauthorized') {
+            await storage.secureRemove('session_token');
+            await storage.removeItem('cached_user_profile');
+            if (!cancelled) setUser(null);
+          }
+        }
       } catch {
-        await storage.secureRemove('session_token');
-        if (!cancelled) setUser(null);
+        // Keep existing cached state on storage read error
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -102,6 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
     });
     await storage.secureSet('session_token', response.session_token);
+    await storage.setItem('cached_user_profile', JSON.stringify(response.user));
     setUser(response.user);
   }, []);
 
@@ -113,6 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         name,
       });
       await storage.secureSet('session_token', response.session_token);
+      await storage.setItem('cached_user_profile', JSON.stringify(response.user));
       setUser(response.user);
     },
     [],
@@ -129,6 +154,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Best-effort logout
     } finally {
       await storage.secureRemove('session_token');
+      await storage.removeItem('cached_user_profile');
       setUser(null);
     }
   }, [isSignedIn, clerkSignOut]);

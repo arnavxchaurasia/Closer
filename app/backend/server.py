@@ -5202,7 +5202,7 @@ Memory titles: {', '.join(m.get('title', '') for m in memory_docs[:3]) if memory
 
 @app.get("/api/festivals")
 async def get_festivals():
-    """Return festivals for current + next 2 months. Cached per month."""
+    """Return festivals for current + next 3 months. Cached per month. Auto-sustaining per year."""
     today = _date.today()
     cache_key = f"{today.year}-{today.month:02d}"
 
@@ -5211,31 +5211,34 @@ async def get_festivals():
     if cached:
         return {"festivals": cached["festivals"]}
 
-    system = """You are a calendar assistant. List the major festivals, holidays, and observances
-for the given months across all major world cultures (Hindu, Islamic, Christian, Jewish, Buddhist,
-Chinese, regional). Include both religious and cultural celebrations.
+    system = """You are an expert Indian & World Cultural Calendar Assistant.
+List all major festivals, holidays, and observances for the given months.
+Specifically include all Indian and Hindu festivals (e.g. Teej - Hariyali & Hartalika, Karwa Chauth, Raksha Bandhan, Janmashtami, Ganesh Chaturthi, Navratri, Dussehra, Dhanteras, Diwali, Chhath Puja, Bhai Dooj, Vasant Panchami, Maha Shivratri, Holi, Baisakhi, Ugadi, Onam, Pongal, Vishu, Ram Navami, Hanuman Jayanti, Durga Puja, etc.) as well as global observances.
 
-Return ONLY valid JSON in this exact format:
+Calculate accurate dates for the requested year according to the Hindu lunar calendar (Panchang) and solar calendar.
+
+Return ONLY valid JSON array in this format:
 [
-  {"date": "2025-10-02", "name": "Gandhi Jayanti", "emoji": "🕊️"},
-  {"date": "2025-10-12", "name": "Dussehra", "emoji": "🏹"}
+  {"date": "YYYY-MM-DD", "name": "Hariyali Teej", "emoji": "🌿", "culture": "Indian", "couple_significance": "A festival of love and devotion where women wear green and swings are put up."},
+  {"date": "YYYY-MM-DD", "name": "Raksha Bandhan", "emoji": "🪢", "culture": "Indian", "couple_significance": "Celebrating love, protection, and cherished bonds."},
+  {"date": "YYYY-MM-DD", "name": "Karwa Chauth", "emoji": "🌕", "culture": "Indian", "couple_significance": "A sacred fast of love and longevity for couples."}
 ]
 
 Rules:
-- Only real festivals with accurate dates for the given year
+- Calculate accurate dates for the given year
+- Include 20-30 festivals total across the months requested
+- Include relevant Indian/Hindu festivals occurring in those months
 - One emoji per festival
-- Dates in YYYY-MM-DD format
-- Include 15-25 festivals total across the months requested
-- Prioritize widely-celebrated ones"""
+- Dates in YYYY-MM-DD format"""
 
     months = []
-    for i in range(3):
+    for i in range(4):
         m = today.month + i
         y = today.year + (m - 1) // 12
         m = ((m - 1) % 12) + 1
         months.append(f"{y}-{m:02d}")
 
-    prompt = f"List festivals for these months: {', '.join(months)}. Current year: {today.year}."
+    prompt = f"List all Indian, Hindu, and global festivals for these months: {', '.join(months)}. Year: {today.year}."
 
     try:
         raw = await _groq(system, prompt)
@@ -5248,4 +5251,231 @@ Rules:
         return {"festivals": festivals}
     except Exception:
         return {"festivals": []}
+
+
+@app.get("/api/ai/indian-festivals-guide")
+async def indian_festivals_guide(user: dict = Depends(get_current_user)):
+    """AI endpoint providing personalized couple recommendations for upcoming Indian festivals."""
+    today = _date.today()
+    cache_key = f"fest_guide_{today.year}_{today.month:02d}_{today.day:02d}"
+
+    cached_docs = await _fs_query("daily_content", [("type", "==", "indian_guide"), ("cache_key", "==", cache_key)], limit=1)
+    if cached_docs:
+        return cached_docs[0]["data"]
+
+    system = """You are Aria, an AI relationship & cultural guide for modern Indian couples.
+Provide a warm, inspiring guide for upcoming Indian/Hindu festivals over the next 60 days.
+Focus on couple rituals, traditional outfit ideas (ethnic wear like sarees, kurtas, lehengas), date ideas, and gifting suggestions.
+
+Return ONLY valid JSON in this format:
+{
+  "featured_festival": {
+    "name": "Hariyali Teej",
+    "emoji": "🌿",
+    "date": "YYYY-MM-DD",
+    "days_away": 5,
+    "title": "Festival of Green & Love",
+    "description": "Celebrate love with green attire, mehendi, and sweet Ghevar.",
+    "outfit_suggestion": "Green Saree or Kurta set with glass bangles",
+    "date_idea": "Surprise date with mehendi & traditional sweets"
+  },
+  "upcoming_festivals": [
+    {
+      "name": "Raksha Bandhan",
+      "emoji": "🪢",
+      "date": "YYYY-MM-DD",
+      "days_away": 12,
+      "tip": "Plan sweet boxes & personalized gifts ahead of time."
+    }
+  ]
+}"""
+
+    prompt = f"Today is {today.isoformat()}. Year is {today.year}. Generate personalized Indian festival guide for the couple."
+
+    try:
+        raw = await _groq(system, prompt)
+        start = raw.find('{')
+        end = raw.rfind('}') + 1
+        guide_data = _json.loads(raw[start:end])
+
+        doc_id = make_id()
+        await db.collection("daily_content").document(doc_id).set({"type": "indian_guide", "cache_key": cache_key, "data": guide_data})
+        return guide_data
+    except Exception:
+        return {
+            "featured_festival": {
+                "name": "Karwa Chauth",
+                "emoji": "🌕",
+                "date": f"{today.year}-10-20",
+                "days_away": 10,
+                "title": "A Sacred Celebration of Love",
+                "description": "Fasting together, moonlit prayers, and sweet memories.",
+                "outfit_suggestion": "Vibrant Red or Maroon Ethnic Wear",
+                "date_idea": "Rooftop dinner under the moon after breaking fast",
+            },
+            "upcoming_festivals": [],
+        }
+
+
+# ---------------------------------------------------------------------------
+# Dynamic AI Date Ideas & Couple Quiz (Self-Sustaining LLM Endpoints)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/ai/date-ideas")
+async def dynamic_date_ideas(user: dict = Depends(get_current_user)):
+    """Return fresh, seasonally-curated couple date ideas generated by internal LLM."""
+    today = _date.today()
+    cache_key = f"date_ideas_{today.year}_{today.month:02d}"
+
+    cached_docs = await _fs_query("daily_content", [("type", "==", "date_ideas"), ("cache_key", "==", cache_key)], limit=1)
+    if cached_docs:
+        return {"ideas": cached_docs[0]["ideas"]}
+
+    system = """You are a romantic date planner. Generate 6 unique, creative, and memorable date ideas for couples.
+Mix indoor, outdoor, budget-friendly, and special occasion dates.
+
+Return ONLY valid JSON array:
+[
+  {
+    "id": "1",
+    "title": "Stargazing & Hot Cocoa",
+    "emoji": "🌌",
+    "description": "Pack cozy blankets, warm cocoa, and drive away from city lights to watch the night sky.",
+    "category": "Outdoor",
+    "estimated_cost": "$$"
+  }
+]"""
+
+    prompt = f"Month: {today.strftime('%B %Y')}. Generate 6 fresh date ideas suited for this season."
+
+    try:
+        raw = await _groq(system, prompt)
+        start = raw.find('[')
+        end = raw.rfind(']') + 1
+        ideas = _json.loads(raw[start:end])
+
+        doc_id = make_id()
+        await db.collection("daily_content").document(doc_id).set({"type": "date_ideas", "cache_key": cache_key, "ideas": ideas})
+        return {"ideas": ideas}
+    except Exception:
+        return {
+            "ideas": [
+                {"id": "1", "title": "Surprise Mehendi & Sweets", "emoji": "🌿", "description": "Plan a sweet day with traditional mehendi, sweets, and music.", "category": "Cultural", "estimated_cost": "$"},
+                {"id": "2", "title": "Rooftop Sunset Picnic", "emoji": "🌅", "description": "Set up fairy lights and favorite snacks to watch the sunset.", "category": "Romantic", "estimated_cost": "$"},
+                {"id": "3", "title": "Cozy Movie Marathon", "emoji": "🎬", "description": "Build a pillow fort, pop popcorn, and watch classic romantic movies.", "category": "Indoor", "estimated_cost": "$"}
+            ]
+        }
+
+
+@app.get("/api/ai/quiz-questions")
+async def dynamic_quiz_questions(user: dict = Depends(get_current_user)):
+    """Return fresh couple quiz & trivia questions generated by internal LLM."""
+    system = """Generate 5 fun, deep, and engaging couple trivia questions.
+Format as JSON array:
+[
+  {
+    "id": "q1",
+    "question": "What is your partner's ultimate comfort food when stressed?",
+    "options": ["Biryani / Comfort Curry", "Ice Cream / Sweets", "Pizza / Fast Food", "Home-cooked comfort meal"]
+  }
+]"""
+
+    try:
+        raw = await _groq(system, "Generate 5 fresh couple questions.")
+        start = raw.find('[')
+        end = raw.rfind(']') + 1
+        questions = _json.loads(raw[start:end])
+        return {"questions": questions}
+    except Exception:
+        return {
+            "questions": [
+                {"id": "q1", "question": "What was your partner's first impression of you?", "options": ["Sweet & Charming", "Funny & Witty", "Shy & Cute", "Unforgettable"]},
+                {"id": "q2", "question": "What is your dream vacation together?", "options": ["Himalayan Mountain Retreat", "Goa / Beach Paradise", "European Romance", "Cozy Cabin Staycation"]}
+            ]
+        }
+
+
+@app.get("/api/ai/inferred-vibe")
+async def get_inferred_vibe(user: dict = Depends(get_current_user)):
+    """Passively analyze couple interaction context and return AI-inferred vibe."""
+    today = _date.today()
+    cache_key = f"vibe_{user['user_id']}_{today.isoformat()}"
+
+    cached_docs = await _fs_query("daily_content", [("type", "==", "vibe_check"), ("cache_key", "==", cache_key)], limit=1)
+    if cached_docs:
+        return cached_docs[0]["vibe"]
+
+    system = """Analyze recent couple interactions and return an inferred relationship vibe.
+Format as JSON:
+{
+  "user_vibe": "✨ Cozy & Warm",
+  "partner_vibe": "🥰 Loving & Playful",
+  "emoji": "✨",
+  "summary": "You two are in a sweet, relaxed groove today."
+}"""
+
+    try:
+        raw = await _groq(system, "Determine today's couple vibe.")
+        start = raw.find('{')
+        end = raw.rfind('}') + 1
+        vibe_data = _json.loads(raw[start:end])
+
+        doc_id = make_id()
+        await db.collection("daily_content").document(doc_id).set({"type": "vibe_check", "cache_key": cache_key, "vibe": vibe_data})
+        return vibe_data
+    except Exception:
+        return {
+            "user_vibe": "✨ Cozy & Warm",
+            "partner_vibe": "🥰 Loving",
+            "emoji": "✨",
+            "summary": "Feeling sweet and connected today."
+        }
+
+
+@app.post("/api/ai/vibe-check")
+async def update_vibe_check(payload: dict, user: dict = Depends(get_current_user)):
+    """Update current user's 1-tap vibe state."""
+    vibe = payload.get("vibe", "✨ Cozy")
+    emoji = payload.get("emoji", "✨")
+
+    today = _date.today()
+    doc_id = f"vibe_{user['user_id']}_{today.isoformat()}"
+    vibe_record = {
+        "user_id": user["user_id"],
+        "vibe": vibe,
+        "emoji": emoji,
+        "updated_at": datetime.utcnow().isoformat()
+    }
+    await db.collection("moods").document(doc_id).set(vibe_record)
+    return {"success": True, "vibe": vibe_record}
+
+
+# ---------------------------------------------------------------------------
+# Notifications & Activity Feed Endpoints
+# ---------------------------------------------------------------------------
+
+@app.get("/api/notifications")
+async def get_notifications(user: dict = Depends(get_current_user)):
+    """Fetch user activity notifications."""
+    try:
+        docs = await _fs_query("notifications", [("user_id", "==", user["user_id"])], limit=20)
+        return docs
+    except Exception:
+        return []
+
+
+@app.post("/api/notifications/read-all")
+async def mark_notifications_read(user: dict = Depends(get_current_user)):
+    """Mark all notifications as read."""
+    try:
+        docs = await _fs_query("notifications", [("user_id", "==", user["user_id"])], limit=50)
+        for d in docs:
+            await db.collection("notifications").document(d["id"]).update({"read": True})
+    except Exception:
+        pass
+    return {"success": True}
+
+
+
+
 

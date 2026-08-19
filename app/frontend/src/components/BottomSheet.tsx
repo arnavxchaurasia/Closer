@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import { useTheme } from '@/src/context/ThemeContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface BottomSheetProps {
   visible: boolean;
@@ -20,6 +21,7 @@ interface BottomSheetProps {
 
 export function BottomSheet({ visible, onClose, children, style, maxHeight = '85%' }: BottomSheetProps) {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const slideAnim = useRef(new Animated.Value(0)).current;
   const backdropAnim = useRef(new Animated.Value(0)).current;
 
@@ -69,6 +71,7 @@ export function BottomSheet({ visible, onClose, children, style, maxHeight = '85
           {
             backgroundColor: colors.surface,
             maxHeight: maxHeight as any,
+            paddingBottom: Math.max(insets.bottom, 16),
             transform: [
               {
                 translateY: slideAnim.interpolate({
@@ -100,8 +103,8 @@ const s = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.08)',
     shadowColor: '#000',

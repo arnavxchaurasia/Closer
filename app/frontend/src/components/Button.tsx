@@ -11,7 +11,7 @@ import {
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 import { useTheme } from '@/src/context/ThemeContext';
-import { Colors, radius, space } from '@/src/theme';
+import { Colors, space } from '@/src/theme';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 type Size = 'sm' | 'md' | 'lg';
@@ -40,9 +40,9 @@ function makeVariantStyles(colors: Colors): Record<Variant, { bg: string; textCo
 }
 
 const sizeStyles: Record<Size, { paddingVertical: number; paddingHorizontal: number; fontSize: number; minHeight: number }> = {
-  sm: { paddingVertical: space.xs, paddingHorizontal: space.md, fontSize: 13, minHeight: 36 },
-  md: { paddingVertical: space.sm + 2, paddingHorizontal: space.lg, fontSize: 15, minHeight: 44 },
-  lg: { paddingVertical: space.md - 2, paddingHorizontal: space.xl, fontSize: 16, minHeight: 52 },
+  sm: { paddingVertical: space.xs, paddingHorizontal: space.md, fontSize: 13, minHeight: 40 },
+  md: { paddingVertical: space.sm + 2, paddingHorizontal: space.lg, fontSize: 15, minHeight: 48 },
+  lg: { paddingVertical: space.md - 1, paddingHorizontal: space.xl, fontSize: 16, minHeight: 56 },
 };
 
 function fireHaptic(haptic: 'light' | 'medium' | 'heavy' | 'none') {
@@ -99,8 +99,13 @@ export function Button({
             paddingVertical: ss.paddingVertical,
             paddingHorizontal: ss.paddingHorizontal,
             minHeight: ss.minHeight,
-            borderRadius: 14,
+            borderRadius: 18,
             opacity: isDisabled ? 0.5 : 1,
+            shadowColor: variant === 'primary' ? colors.rose : 'transparent',
+            shadowOpacity: variant === 'primary' ? 0.2 : 0,
+            shadowRadius: 10,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: variant === 'primary' ? 3 : 0,
           },
           variant === 'ghost' && { borderWidth: 1, borderColor: colors.rose },
           fullWidth && styles.fullWidth,
@@ -115,7 +120,7 @@ export function Button({
               <Text
                 style={[
                   typography.body,
-                  { color: vs.textColor, fontSize: ss.fontSize, fontWeight: '600' },
+                  { color: vs.textColor, fontSize: ss.fontSize, fontWeight: '700', letterSpacing: 0.1 },
                 ]}
                 numberOfLines={1}
               >

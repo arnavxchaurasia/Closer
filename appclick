@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+          autoReplaceSvg: 'nest'
+        };
+      </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Launch - OurSpace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050510; }
+        
+        /* Entrance Animations */
+        @keyframes logo-reveal {
+            0% { transform: scale(0.8) translateY(20px); opacity: 0; filter: blur(10px); }
+            100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+        }
+        
+        @keyframes bg-expand {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes text-reveal {
+            0% { letter-spacing: 1em; opacity: 0; filter: blur(5px); }
+            100% { letter-spacing: -0.04em; opacity: 1; filter: blur(0); }
+        }
+
+        /* "Going Away" / Exit Animations */
+        @keyframes exit-slide-up {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100%); opacity: 0; }
+        }
+        
+        @keyframes exit-scale-out {
+            0% { transform: scale(1); opacity: 1; filter: blur(0); }
+            100% { transform: scale(1.5); opacity: 0; filter: blur(20px); }
+        }
+
+        .animate-logo-reveal { animation: logo-reveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .animate-bg-expand { animation: bg-expand 2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .animate-text-reveal { animation: text-reveal 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        
+        .exit-sequence { animation: exit-scale-out 0.8s cubic-bezier(0.7, 0, 0.3, 1) forwards; }
+        .exit-overlay { animation: exit-slide-up 1s cubic-bezier(0.7, 0, 0.3, 1) forwards; }
+
+        /* Floating interaction */
+        @keyframes float-gentle {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+        .animate-float-gentle { animation: float-gentle 4s ease-in-out infinite; }
+
+        /* Shimmer for progress */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body class="h-[812px] flex flex-col items-center justify-center overflow-hidden relative">
+    
+    <!-- The "Going Away" Transition Wrapper -->
+    <div id="main-container" class="absolute inset-0 flex flex-col items-center justify-center z-20">
+        
+        <!-- Immersive Background Layers -->
+        <div class="absolute inset-0 z-0 overflow-hidden bg-[#050510]">
+            <div class="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] bg-gradient-to-br from-indigo-900/40 via-transparent to-rose-900/20 blur-[120px] animate-bg-expand"></div>
+            <div class="absolute inset-0 opacity-[0.05] pointer-events-none" style="background-image: url('https://grainy-gradients.vercel.app/noise.svg');"></div>
+        </div>
+
+        <!-- Central Launch Branding -->
+        <div class="relative z-10 flex flex-col items-center">
+            <!-- Iconic Teardrop Logo -->
+            <div class="relative w-48 h-48 mb-12 animate-logo-reveal">
+                <div class="absolute inset-0 bg-indigo-500/20 blur-[60px] rounded-full"></div>
+                
+                <div class="relative w-full h-full flex items-center justify-center animate-float-gentle">
+                    <!-- The Studio Logo Construction -->
+                    <div class="absolute w-24 h-24 bg-[#1e1b4b] rounded-full rounded-tr-none rotate-45 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] border border-white/5"></div>
+                    <div class="absolute w-24 h-24 bg-gradient-to-br from-rose-400 via-fuchsia-500 to-indigo-600 rounded-full rounded-tr-none -rotate-[135deg] translate-x-3 translate-y-3 shadow-2xl border border-white/20"></div>
+                    
+                    <!-- Center Glow -->
+                    <div class="absolute w-4 h-4 bg-white/40 blur-md rounded-full translate-x-2 translate-y-2"></div>
+                </div>
+            </div>
+
+            <!-- Brand Name -->
+            <div class="text-center">
+                <h1 id="brand-text" class="text-6xl font-[900] tracking-[-0.04em] text-white leading-none mb-6 animate-text-reveal">
+                    ourspace
+                </h1>
+                <div class="flex items-center justify-center space-x-2 opacity-0 animate-[fadeIn_0.5s_ease-out_1s_forwards]">
+                    <div class="h-px w-6 bg-white/20"></div>
+                    <span class="text-[10px] font-bold tracking-[0.6em] uppercase text-white/40">Opening your world</span>
+                    <div class="h-px w-6 bg-white/20"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Indicator (Simulated Loading) -->
+        <div class="absolute bottom-24 flex flex-col items-center space-y-4">
+            <div class="w-16 h-[2px] bg-white/5 rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-500 to-rose-500 w-0 transition-all duration-[2000ms] ease-out"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The "App Content" revealed after transition (Mock Home Hint) -->
+    <div id="app-reveal" class="absolute inset-0 z-10 flex flex-col p-8 opacity-0 pointer-events-none">
+        <div class="flex justify-between items-center mb-12">
+            <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-xl border border-white/10"></div>
+            <div class="flex -space-x-3">
+                <img class="w-10 h-10 rounded-full border-2 border-slate-900" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" alt="">
+                <img class="w-10 h-10 rounded-full border-2 border-slate-900" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="">
+            </div>
+        </div>
+        <div class="space-y-6">
+            <div class="h-48 w-full bg-white/5 rounded-[2.5rem] border border-white/5 shadow-2xl"></div>
+            <div class="h-24 w-full bg-white/5 rounded-[2rem] border border-white/5"></div>
+            <div class="h-24 w-full bg-white/5 rounded-[2rem] border border-white/5"></div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const bar = document.getElementById('progress-bar');
+            const container = document.getElementById('main-container');
+            const reveal = document.getElementById('app-reveal');
+
+            // 1. Start loading progress
+            setTimeout(() => {
+                bar.style.width = '100%';
+            }, 500);
+
+            // 2. Trigger "Going Away" animation after progress completes
+            setTimeout(() => {
+                container.classList.add('exit-sequence');
+                reveal.style.opacity = '1';
+                reveal.style.transition = 'opacity 1s ease-in-out 0.5s';
+            }, 3000);
+        });
+    </script>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</body>
+</html>

@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, usePathname } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import {
-  Animated, Dimensions, Pressable, ScrollView,
+  Animated, Pressable, ScrollView, useWindowDimensions,
   StyleSheet, Switch, Text, View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,8 +12,6 @@ import { useCouple } from '@/src/context/CoupleContext';
 import { useDrawer } from '@/src/context/DrawerContext';
 import { useTheme } from '@/src/context/ThemeContext';
 import { radius, space } from '@/src/theme';
-
-const W = Math.min(Dimensions.get('window').width * 0.82, 320);
 
 const NAV_SECTIONS = [
   {
@@ -65,14 +63,16 @@ export function Drawer() {
   const { user, logout } = useAuth();
   const { partner, isPaired } = useCouple();
   const pathname = usePathname();
+  const { width: screenWidth } = useWindowDimensions();
+  const panelWidth = Math.min(screenWidth * 0.86, 360);
 
-  const translateX = useRef(new Animated.Value(-W)).current;
+  const translateX = useRef(new Animated.Value(-panelWidth)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.parallel([
       Animated.spring(translateX, {
-        toValue: isOpen ? 0 : -W,
+        toValue: isOpen ? 0 : -panelWidth,
         useNativeDriver: true,
         damping: 22,
         stiffness: 220,
@@ -84,7 +84,7 @@ export function Drawer() {
         useNativeDriver: true,
       }),
     ]).start();
-  }, [isOpen]);
+  }, [isOpen, panelWidth]);
 
   const navigate = (route: string) => {
     close();
@@ -112,7 +112,7 @@ export function Drawer() {
       </Animated.View>
 
       {/* Panel */}
-      <Animated.View style={[s.panel, { backgroundColor: colors.surface, transform: [{ translateX }] }]}>
+      <Animated.View style={[s.panel, { width: panelWidth, backgroundColor: colors.surface, transform: [{ translateX }] }]}>
         <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
 
           {/* Profile header */}
@@ -215,7 +215,7 @@ export function HamburgerButton() {
 const s = StyleSheet.create({
   panel: {
     position: 'absolute', top: 0, bottom: 0, left: 0,
-    width: W, zIndex: 201,
+    zIndex: 201,
     shadowColor: '#000',
     shadowOffset: { width: 4, height: 0 },
     shadowOpacity: 0.25,

@@ -1,7 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import {
-  Pressable,
   StyleProp,
   StyleSheet,
   View,
@@ -9,6 +8,7 @@ import {
 } from 'react-native';
 
 import { useTheme } from '@/src/context/ThemeContext';
+import { Press } from '@/src/components/Press';
 import { radius, space } from '@/src/theme';
 
 interface CardProps {
@@ -38,16 +38,9 @@ export function Card({ children, style, onPress, gradient, padding = space.md }:
 
   if (onPress) {
     return (
-      <Pressable
-        onPress={onPress}
-        style={({ pressed }) => [
-          styles.container,
-          style,
-          pressed && styles.pressed,
-        ]}
-      >
+      <Press haptic="light" onPress={onPress} style={[styles.container, style]}>
         {inner}
-      </Pressable>
+      </Press>
     );
   }
 
@@ -69,8 +62,5 @@ const styles = StyleSheet.create({
   },
   gradient: {
     // borderRadius applied inline
-  },
-  pressed: {
-    opacity: 0.82,
   },
 });

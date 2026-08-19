@@ -2,7 +2,7 @@
   "expo": {
     "name": "OurSpace",
     "slug": "soulsync",
-    "owner": "mait1999",
+    "owner": "mait1999s-team",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "soulsync",
@@ -12,7 +12,7 @@
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FFFFFF"
     },
     "ios": {
       "supportsTablet": true,
@@ -52,7 +52,7 @@
       "backendUrl": "http://localhost:8001",
       "router": {},
       "eas": {
-        "projectId": "239967d0-a145-4b1c-bf5d-b801ec0f781e"
+        "projectId": "628d75cf-955b-45ac-8c0c-5f221c30437a"
       }
     }
   }

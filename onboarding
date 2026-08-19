@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+            autoReplaceSvg: 'nest'
+        };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding 1 - OurSpace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        @keyframes bounce-slow {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .animate-bounce-slow {
+            animation: bounce-slow 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-white h-[812px] flex flex-col overflow-hidden relative text-[#1e1b4b]">
+
+    <!-- Immersive Background -->
+    <div class="absolute inset-0 z-0">
+        <div
+            class="absolute top-[-10%] left-[-20%] w-[120%] h-[50%] bg-gradient-to-b from-indigo-50 to-transparent blur-3xl">
+        </div>
+        <div class="absolute inset-0 opacity-[0.02] pointer-events-none"
+            style="background-image: url('https://grainy-gradients.vercel.app/noise.svg');"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="relative z-10 p-8 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center">
+                <div class="w-2 h-2 bg-white rounded-full"></div>
+            </div>
+            <span class="font-black text-sm tracking-tighter">ourspace</span>
+        </div>
+        <button class="text-xs font-bold text-slate-400 uppercase tracking-widest">Skip</button>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="relative z-10 flex-1 flex flex-col px-8">
+        <div class="relative mt-4">
+            <!-- Large Artistic Image -->
+            <div
+                class="w-full h-[360px] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-indigo-100 border-4 border-white">
+                <img class="w-full h-full object-cover"
+                    src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_2efe58967f_0d7f7881a523b2f5.png"
+                    alt="high-end editorial photography of a couple sitting closely, minimalist aesthetic, soft sunlight, war" />
+            </div>
+
+            <!-- Floating Modern Element -->
+            <div
+                class="absolute -bottom-6 -right-4 bg-white/90 backdrop-blur-xl p-4 rounded-3xl shadow-xl border border-white/50 w-48 animate-bounce-slow">
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center">
+                        <i class="fa-solid fa-heart text-rose-500 text-xs"></i>
+                    </div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Daily Task</span>
+                </div>
+                <p class="text-xs font-extrabold leading-tight">"What's one thing you appreciate about them today?"</p>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="mt-16 space-y-4">
+            <h2 class="text-[42px] font-[900] leading-[0.9] tracking-tighter">
+                Deeper <br /> <span class="text-indigo-600">Connection.</span>
+            </h2>
+            <p class="text-slate-500 font-medium leading-relaxed max-w-[260px]">
+                A digital sanctuary designed to help you and your partner grow closer through shared moments.
+            </p>
+        </div>
+    </div>
+
+    <!-- Navigation Footer -->
+    <div class="relative z-10 p-8 flex items-center justify-between">
+        <div class="flex space-x-2">
+            <div class="w-10 h-1.5 bg-indigo-600 rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-slate-200 rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-slate-200 rounded-full"></div>
+        </div>
+
+        <button
+            class="w-14 h-14 bg-[#1e1b4b] text-white rounded-full flex items-center justify-center shadow-xl shadow-indigo-200 active:scale-90 transition-transform">
+            <i class="fa-solid fa-arrow-right text-lg"></i>
+        </button>
+    </div>
+</body>
+
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+            autoReplaceSvg: 'nest'
+        };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding 2 - OurSpace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-white h-[812px] flex flex-col overflow-hidden relative text-[#1e1b4b]">
+
+    <!-- Immersive Background -->
+    <div class="absolute inset-0 z-0">
+        <div
+            class="absolute top-[-10%] right-[-20%] w-[120%] h-[50%] bg-gradient-to-b from-rose-50 to-transparent blur-3xl">
+        </div>
+        <div class="absolute inset-0 opacity-[0.02] pointer-events-none"
+            style="background-image: url('https://grainy-gradients.vercel.app/noise.svg');"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="relative z-10 p-8 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center">
+                <div class="w-2 h-2 bg-white rounded-full"></div>
+            </div>
+            <span class="font-black text-sm tracking-tighter">ourspace</span>
+        </div>
+        <button class="text-xs font-bold text-slate-400 uppercase tracking-widest">Skip</button>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="relative z-10 flex-1 flex flex-col px-8">
+        <div class="relative mt-4">
+            <!-- Main Featured Memory -->
+            <div
+                class="w-full h-[320px] rounded-[2.5rem] overflow-hidden shadow-2xl shadow-rose-100 border-4 border-white rotate-[-2deg]">
+                <img class="w-full h-full object-cover"
+                    src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_2efe58967f_998476bc44d31c95.png"
+                    alt="high-end editorial photography of a polaroid photo of a couple laughing, lying on a wooden table nex" />
+            </div>
+
+            <!-- Secondary Overlapping Memory -->
+            <div
+                class="absolute -bottom-10 -left-4 w-40 h-40 rounded-3xl overflow-hidden shadow-xl border-4 border-white rotate-[6deg]">
+                <img class="w-full h-full object-cover"
+                    src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_22961421f2_e38dc6fb99d91eae.png"
+                    alt="close up of two hands intertwined, soft lighting, romantic studio photography" />
+            </div>
+
+            <!-- Floating Modern Element -->
+            <div
+                class="absolute -top-4 -right-4 bg-white/90 backdrop-blur-xl px-4 py-3 rounded-2xl shadow-xl border border-white/50 animate-pulse">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-lock text-rose-500 text-[10px]"></i>
+                    <span class="text-[10px] font-black text-slate-700 uppercase tracking-tight">Encrypted Vault</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="mt-20 space-y-4">
+            <h2 class="text-[42px] font-[900] leading-[0.9] tracking-tighter">
+                Capture <br /> <span class="text-rose-500">Memories.</span>
+            </h2>
+            <p class="text-slate-500 font-medium leading-relaxed max-w-[260px]">
+                Build a private journal of your journey. Every photo and note is safely tucked away in your vault.
+            </p>
+        </div>
+    </div>
+
+    <!-- Navigation Footer -->
+    <div class="relative z-10 p-8 flex items-center justify-between">
+        <div class="flex space-x-2">
+            <div class="w-1.5 h-1.5 bg-slate-200 rounded-full"></div>
+            <div class="w-10 h-1.5 bg-rose-500 rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-slate-200 rounded-full"></div>
+        </div>
+
+        <button
+            class="w-14 h-14 bg-[#1e1b4b] text-white rounded-full flex items-center justify-center shadow-xl shadow-rose-200 active:scale-90 transition-transform">
+            <i class="fa-solid fa-arrow-right text-lg"></i>
+        </button>
+    </div>
+
+</body>
+
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+            autoReplaceSvg: 'nest'
+        };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding 3 - OurSpace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-white h-[812px] flex flex-col overflow-hidden relative text-[#1e1b4b]">
+
+    <!-- Immersive Background -->
+    <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 bg-gradient-to-tr from-indigo-50 via-white to-rose-50 blur-3xl opacity-60"></div>
+        <div class="absolute inset-0 opacity-[0.02] pointer-events-none"
+            style="background-image: url('https://grainy-gradients.vercel.app/noise.svg');"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="relative z-10 p-8 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <div
+                class="w-6 h-6 bg-gradient-to-tr from-indigo-600 to-rose-500 rounded-full flex items-center justify-center">
+                <div class="w-2 h-2 bg-white rounded-full"></div>
+            </div>
+            <span class="font-black text-sm tracking-tighter">ourspace</span>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="relative z-10 flex-1 flex flex-col px-8">
+        <div class="relative mt-4 flex justify-center">
+            <!-- Central Immersive Visual -->
+            <div
+                class="relative w-full h-[380px] bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white">
+                <img class="w-full h-full object-cover opacity-80"
+                    src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_048672d085_e74c5f697ba4aa01.png"
+                    alt="breathtaking 3D abstract render of two glowing pulse waves meeting in a dark space, neon indigo and " />
+
+                <!-- Real-time interaction UI overlays -->
+                <div class="absolute inset-0 flex flex-col items-center justify-center space-y-4">
+                    <div
+                        class="bg-white/10 backdrop-blur-md border border-white/20 px-6 py-3 rounded-full flex items-center space-x-3 animate-pulse">
+                        <div class="w-2 h-2 bg-rose-500 rounded-full"></div>
+                        <span class="text-white text-xs font-bold uppercase tracking-widest">Partner is Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Data Element -->
+            <div
+                class="absolute -bottom-6 bg-white px-8 py-4 rounded-3xl shadow-2xl border border-slate-100 flex items-center space-x-4">
+                <div class="flex -space-x-2">
+                    <img class="w-8 h-8 rounded-full border-2 border-white"
+                        src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg" alt="">
+                    <img class="w-8 h-8 rounded-full border-2 border-white"
+                        src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="">
+                </div>
+                <div class="h-8 w-px bg-slate-100"></div>
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-bolt-lightning text-indigo-500 text-xs"></i>
+                    <span class="text-xs font-black">SYNCED</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="mt-20 space-y-4">
+            <h2 class="text-[42px] font-[900] leading-[0.9] tracking-tighter">
+                Stay in <br /> <span
+                    class="bg-gradient-to-r from-indigo-600 to-rose-500 bg-clip-text text-transparent">Sync.</span>
+            </h2>
+            <p class="text-slate-500 font-medium leading-relaxed max-w-[260px]">
+                Experience your partner's presence in real-time. Feel their pulse, breathe together, and stay connected.
+            </p>
+        </div>
+    </div>
+
+    <!-- Navigation Footer -->
+    <div class="relative z-10 p-8 flex flex-col space-y-6">
+        <div class="flex justify-center space-x-2">
+            <div class="w-1.5 h-1.5 bg-slate-200 rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-slate-200 rounded-full"></div>
+            <div class="w-10 h-1.5 bg-indigo-600 rounded-full"></div>
+        </div>
+
+        <button
+            class="w-full py-5 bg-[#1e1b4b] text-white rounded-[2rem] font-black text-lg shadow-2xl shadow-indigo-200 active:scale-95 transition-all flex items-center justify-center space-x-3">
+            <span>Get Started</span>
+            <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+
+</body>
+
+</html>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        window.FontAwesomeConfig = {
+            autoReplaceSvg: 'nest'
+        };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splash - OurSpace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        @keyframes rotate-bg {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            50% {
+                transform: rotate(180deg) scale(1.5);
+            }
+
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(2deg);
+            }
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.2);
+            }
+        }
+
+        .animate-rotate-bg {
+            animation: rotate-bg 20s linear infinite;
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-pulse-glow {
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-white flex flex-col items-center justify-center h-[812px] overflow-hidden relative">
+
+    <!-- Sophisticated Studio Background -->
+    <div class="absolute inset-0 z-0">
+        <!-- Vibrant mesh-like gradients -->
+        <div
+            class="absolute top-[-20%] left-[-10%] w-[120%] h-[60%] bg-gradient-to-br from-indigo-100/50 via-rose-50/30 to-transparent blur-[100px] animate-pulse-glow">
+        </div>
+        <div
+            class="absolute bottom-[-10%] right-[-10%] w-[100%] h-[50%] bg-gradient-to-tl from-indigo-50/40 via-transparent to-transparent blur-[80px]">
+        </div>
+
+        <!-- Subtle noise texture overlay -->
+        <div class="absolute inset-0 opacity-[0.03] pointer-events-none"
+            style="background-image: url('https://grainy-gradients.vercel.app/noise.svg');"></div>
+    </div>
+
+    <!-- Central Branding -->
+    <div class="relative z-10 flex flex-col items-center">
+        <!-- Modern Teardrop Logo (Iconic focus) -->
+        <div class="relative w-40 h-40 mb-12 animate-float">
+            <!-- Subtle shadow for depth -->
+            <div class="absolute inset-0 bg-indigo-900/5 blur-2xl rounded-full scale-90 translate-y-8"></div>
+
+            <div class="relative w-full h-full flex items-center justify-center">
+                <!-- Outer Ring (White/Glassy) -->
+                <div
+                    class="absolute inset-0 bg-white rounded-full shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 flex items-center justify-center">
+                    <!-- Inner Teardrop Pair -->
+                    <div class="relative w-24 h-24">
+                        <!-- Bottom Indigo Teardrop -->
+                        <div
+                            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-[#1e1b4b] rounded-full rounded-tr-none rotate-45 shadow-inner">
+                        </div>
+                        <!-- Top Gradient Teardrop -->
+                        <div
+                            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-rose-400 to-indigo-600 rounded-full rounded-tr-none -rotate-[135deg] translate-x-2 translate-y-2 border border-white/20">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="text-center">
+            <h1 class="text-[52px] font-[900] tracking-[-0.04em] text-[#1e1b4b] leading-none mb-4"
+                style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                ourspace
+            </h1>
+            <div class="flex items-center justify-center space-x-3">
+                <span class="text-[11px] font-extrabold tracking-[0.4em] uppercase text-slate-400/80">Premium Private
+                    Space</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Elegant Loading Indicator -->
+    <div class="absolute bottom-20 flex flex-col items-center space-y-4">
+        <div class="w-12 h-[2px] bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-indigo-600 w-1/3 rounded-full animate-[loading_1.5s_infinite_ease-in-out]"></div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes loading {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(300%);
+            }
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</body>
+
+</html>

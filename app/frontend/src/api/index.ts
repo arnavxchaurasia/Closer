@@ -47,6 +47,7 @@ class Api {
 
     if (response.status === 401) {
       await storage.secureRemove('session_token');
+      await storage.removeItem('cached_user_profile');
       throw new Error('Unauthorized');
     }
 
