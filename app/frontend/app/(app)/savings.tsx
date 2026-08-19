@@ -113,8 +113,6 @@ export default function SavingsScreen() {
   const { user } = useAuth();
   const { isPaired, isLoading: coupleLoading, partner } = useCouple();
   const s = useMemo(() => makeStyles(colors), [colors]);
-  if (coupleLoading) return null;
-  if (!isPaired) return <NotConnected message="Savings goals are shared with your partner. Connect to get started." />;
 
   const [goals, setGoals] = useState<SavingsGoal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -248,6 +246,9 @@ export default function SavingsScreen() {
       </Press>
     );
   };
+
+  if (coupleLoading) return null;
+  if (!isPaired) return <NotConnected message="Savings goals are shared with your partner. Connect to get started." />;
 
   return (
     <SafeAreaView style={s.safe} edges={['top', 'bottom']}>

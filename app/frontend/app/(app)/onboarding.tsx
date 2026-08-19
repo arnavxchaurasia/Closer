@@ -5,16 +5,17 @@ import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Dimensions,
   FlatList,
   KeyboardAvoidingView,
   Modal,
   Platform,
   Pressable,
+  ScrollView,
   Share,
   StyleSheet,
   Text,
   TextInput,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -26,8 +27,6 @@ import { Press } from '@/src/components/Press';
 import { useTheme } from '@/src/context/ThemeContext';
 import { haptics } from '@/src/haptics';
 import { registerForPushNotifications } from '@/src/notifications';
-
-const { width: SW, height: SH } = Dimensions.get('window');
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
@@ -192,7 +191,7 @@ function DatePicker({ day, month, year, onChange, colors: c }: DatePickerProps) 
 
 // ─── Confetti ────────────────────────────────────────────────────────────────
 
-function ConfettiParticle({ emoji, delay, startX }: { emoji: string; delay: number; startX: number }) {
+function ConfettiParticle({ emoji, delay, startX, screenHeight }: { emoji: string; delay: number; startX: number; screenHeight: number }) {
   const y = useRef(new Animated.Value(-30)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -200,7 +199,7 @@ function ConfettiParticle({ emoji, delay, startX }: { emoji: string; delay: numb
     const anim = Animated.sequence([
       Animated.delay(delay),
       Animated.parallel([
-        Animated.timing(y, { toValue: SH + 40, duration: 2800, useNativeDriver: true }),
+        Animated.timing(y, { toValue: screenHeight + 40, duration: 2800, useNativeDriver: true }),
         Animated.sequence([
           Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
           Animated.delay(2000),
@@ -209,7 +208,8 @@ function ConfettiParticle({ emoji, delay, startX }: { emoji: string; delay: numb
       ]),
     ]);
     anim.start();
-  }, []);
+    return () => anim.stop();
+  }, [screenHeight]);
 
   return (
     <Animated.Text style={{
@@ -248,6 +248,7 @@ function ProgressDots({ current, total, roseColor, lineColor }: {
 
 export default function OnboardingScreen() {
   const { colors } = useTheme();
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   // Guard: already onboarded
   useEffect(() => {
@@ -286,11 +287,13 @@ export default function OnboardingScreen() {
   // ── Step 0 – Welcome ──
   const heartScale = useRef(new Animated.Value(1)).current;
   useEffect(() => {
-    Animated.loop(Animated.sequence([
+    const animation = Animated.loop(Animated.sequence([
       Animated.timing(heartScale, { toValue: 1.12, duration: 900, useNativeDriver: true }),
       Animated.timing(heartScale, { toValue: 1,    duration: 900, useNativeDriver: true }),
       Animated.delay(200),
-    ])).start();
+    ]));
+    animation.start();
+    return () => animation.stop();
   }, []);
 
   // ── Step 1 – Name ──
@@ -307,8 +310,8 @@ export default function OnboardingScreen() {
   const [pairingLoading, setPairingLoading] = useState(false);
   const [pairingSuccess, setPairingSuccess] = useState(false);
   const [pairingError, setPairingError] = useState('');
-  const leftHeart  = useRef(new Animated.Value(-SW * 0.35)).current;
-  const rightHeart = useRef(new Animated.Value(SW * 0.35)).current;
+  const leftHeart  = useRef(new Animated.Value(-screenWidth * 0.35)).current;
+  const rightHeart = useRef(new Animated.Value(screenWidth * 0.35)).current;
   const mergedScale = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -419,8 +422,8 @@ export default function OnboardingScreen() {
   // ── Shared Styles ──
   const c = colors;
   const s = {
-    page:    { flex: 1, alignItems: 'center' as const, justifyContent: 'space-between' as const,
-               paddingTop: 56, paddingBottom: 36, paddingHorizontal: 28 },
+    page:    { flexGrow: 1, minHeight: screenHeight, alignItems: 'center' as const, justifyContent: 'space-between' as const,
+               paddingTop: screenHeight < 700 ? 24 : 56, paddingBottom: 28, paddingHorizontal: Math.min(28, Math.max(16, screenWidth * 0.07)) },
     center:  { alignItems: 'center' as const, flex: 1, justifyContent: 'center' as const, gap: 20, width: '100%' as const },
     emojiTxt:{ fontSize: 64 },
     title:   { fontSize: 32, fontWeight: '900' as const, color: c.text, textAlign: 'center' as const, lineHeight: 38 },
@@ -478,7 +481,8 @@ export default function OnboardingScreen() {
                 key={i}
                 emoji={emoji}
                 delay={i * 120}
-                startX={Math.random() * (SW - 30)}
+                startX={Math.random() * Math.max(1, screenWidth - 30)}
+                screenHeight={screenHeight}
               />
             ))}
           </View>
@@ -503,7 +507,8 @@ export default function OnboardingScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: c.bg }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <Animated.View style={[s.page, animatedStyle]}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+          <Animated.View style={[s.page, animatedStyle]}>
 
           {/* Step 1 — Name */}
           {step === 1 && (
@@ -788,7 +793,8 @@ export default function OnboardingScreen() {
             </>
           )}
 
-        </Animated.View>
+          </Animated.View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

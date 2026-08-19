@@ -240,7 +240,7 @@ export default function ExpensesScreen() {
     ? [colors.surface, colors.surface2]
     : partnerOwes
     ? ['#10B981', '#059669']
-    : [colors.rose, '#C2185B'];
+    : [colors.rose, colors.rose];
 
   // Category breakdown
   const byCategory = summary?.by_category ?? {};

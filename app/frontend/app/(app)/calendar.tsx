@@ -69,34 +69,56 @@ const CATEGORIES: Record<string, { label: string; emoji: string; color: string }
 };
 
 const FESTIVALS: Record<string, { name: string; emoji: string }[]> = {
+  // 2025 Indian & Hindu Festivals
   '2025-01-01': [{ name: "New Year's Day", emoji: '🎆' }],
-  '2025-01-14': [{ name: 'Makar Sankranti', emoji: '🪁' }],
+  '2025-01-14': [{ name: 'Lohri / Makar Sankranti', emoji: '🪁' }],
   '2025-01-26': [{ name: 'Republic Day', emoji: '🇮🇳' }],
+  '2025-02-02': [{ name: 'Vasant Panchami', emoji: '🌼' }],
   '2025-02-14': [{ name: "Valentine's Day", emoji: '💝' }],
   '2025-02-26': [{ name: 'Maha Shivratri', emoji: '🕉️' }],
   '2025-03-14': [{ name: 'Holi', emoji: '🌈' }],
-  '2025-03-30': [{ name: 'Ram Navami', emoji: '🙏' }],
-  '2025-04-14': [{ name: 'Baisakhi', emoji: '🌾' }],
-  '2025-04-18': [{ name: 'Good Friday', emoji: '✝️' }],
-  '2025-04-20': [{ name: 'Easter', emoji: '🐣' }],
-  '2025-05-12': [{ name: "Mother's Day", emoji: '🌹' }],
-  '2025-06-15': [{ name: "Father's Day", emoji: '👨' }],
-  '2025-06-16': [{ name: 'Eid ul-Adha', emoji: '🌙' }],
+  '2025-03-30': [{ name: 'Ugadi / Gudi Padwa', emoji: '🚩' }],
+  '2025-04-06': [{ name: 'Ram Navami', emoji: '🙏' }],
+  '2025-04-14': [{ name: 'Baisakhi / Vishu', emoji: '🌾' }],
+  '2025-07-27': [{ name: 'Hariyali Teej', emoji: '🌿' }],
+  '2025-08-09': [{ name: 'Raksha Bandhan', emoji: '🪢' }],
   '2025-08-15': [{ name: 'Independence Day', emoji: '🇮🇳' }],
-  '2025-08-16': [{ name: 'Janmashtami', emoji: '🦚' }],
-  '2025-09-02': [{ name: 'Ganesh Chaturthi', emoji: '🐘' }],
-  '2025-10-02': [{ name: 'Gandhi Jayanti', emoji: '🕊️' }, { name: 'Navratri begins', emoji: '🪔' }],
-  '2025-10-20': [{ name: 'Dussehra', emoji: '🏹' }],
-  '2025-11-05': [{ name: 'Diwali', emoji: '🪔' }],
-  '2025-11-15': [{ name: 'Guru Nanak Jayanti', emoji: '🙏' }],
+  '2025-08-16': [{ name: 'Janmashtami', emoji: '🪚' }],
+  '2025-08-26': [{ name: 'Hartalika Teej', emoji: '🌸' }],
+  '2025-08-27': [{ name: 'Ganesh Chaturthi', emoji: '🐘' }],
+  '2025-09-05': [{ name: 'Onam', emoji: '🌺' }],
+  '2025-09-22': [{ name: 'Navratri begins', emoji: '🪔' }],
+  '2025-10-02': [{ name: 'Gandhi Jayanti / Dussehra', emoji: '🏹' }],
+  '2025-10-09': [{ name: 'Karwa Chauth', emoji: '🌕' }],
+  '2025-10-18': [{ name: 'Dhanteras', emoji: '✨' }],
+  '2025-10-20': [{ name: 'Diwali', emoji: '🪔' }],
+  '2025-10-22': [{ name: 'Bhai Dooj', emoji: '🎁' }],
+  '2025-10-27': [{ name: 'Chhath Puja', emoji: '🌅' }],
   '2025-12-25': [{ name: 'Christmas', emoji: '🎄' }],
   '2025-12-31': [{ name: "New Year's Eve", emoji: '🥂' }],
+
+  // 2026 Indian & Hindu Festivals
   '2026-01-01': [{ name: "New Year's Day", emoji: '🎆' }],
+  '2026-01-14': [{ name: 'Makar Sankranti / Pongal', emoji: '🪁' }],
+  '2026-01-23': [{ name: 'Vasant Panchami', emoji: '🌼' }],
   '2026-02-14': [{ name: "Valentine's Day", emoji: '💝' }],
+  '2026-02-15': [{ name: 'Maha Shivratri', emoji: '🕉️' }],
   '2026-03-03': [{ name: 'Holi', emoji: '🌈' }],
-  '2026-08-15': [{ name: 'Independence Day', emoji: '🇮🇳' }],
-  '2026-10-25': [{ name: 'Diwali', emoji: '🪔' }],
+  '2026-03-19': [{ name: 'Ugadi / Gudi Padwa', emoji: '🚩' }],
+  '2026-03-27': [{ name: 'Ram Navami', emoji: '🙏' }],
+  '2026-04-14': [{ name: 'Baisakhi', emoji: '🌾' }],
+  '2026-08-15': [{ name: 'Hariyali Teej & Independence Day', emoji: '🌿' }],
+  '2026-08-28': [{ name: 'Raksha Bandhan', emoji: '🪢' }],
+  '2026-09-04': [{ name: 'Janmashtami', emoji: '🪚' }],
+  '2026-09-14': [{ name: 'Hartalika Teej & Ganesh Chaturthi', emoji: '🐘' }],
+  '2026-10-11': [{ name: 'Navratri begins', emoji: '🪔' }],
+  '2026-10-20': [{ name: 'Dussehra', emoji: '🏹' }],
+  '2026-10-29': [{ name: 'Karwa Chauth', emoji: '🌕' }],
+  '2026-11-06': [{ name: 'Dhanteras', emoji: '✨' }],
+  '2026-11-08': [{ name: 'Diwali', emoji: '🪔' }],
+  '2026-11-15': [{ name: 'Chhath Puja', emoji: '🌅' }],
   '2026-12-25': [{ name: 'Christmas', emoji: '🎄' }],
+  '2026-12-31': [{ name: "New Year's Eve", emoji: '🥂' }],
 };
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -172,7 +194,7 @@ function makeStyles(c: Colors) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: c.bg },
     // Header
-    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.md, paddingVertical: space.sm, gap: space.sm },
+    header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, paddingTop: space.md, paddingBottom: space.sm, gap: space.sm },
     monthTitle: { fontSize: 20, fontWeight: '700', color: c.text, flex: 1 },
     navBtn: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
     addBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: c.rose, alignItems: 'center', justifyContent: 'center' },
@@ -396,8 +418,13 @@ function MonthView({ viewDate, selected, eventsByDate, tasksByDate, partnerMoodB
     return arr;
   }, [year, month]);
 
+  const opacityAnim = slideAnim.interpolate({
+    inputRange: [-SCREEN_W * 0.8, 0, SCREEN_W * 0.8],
+    outputRange: [0.25, 1, 0.25],
+  });
+
   return (
-    <Animated.View style={{ transform: [{ translateX: slideAnim }] }}>
+    <Animated.View style={{ transform: [{ translateX: slideAnim }], opacity: opacityAnim }}>
       {/* Day-of-week labels */}
       <View style={s.dayLabels}>
         {DAYS_SHORT.map((d, i) => (
@@ -419,8 +446,6 @@ function MonthView({ viewDate, selected, eventsByDate, tasksByDate, partnerMoodB
           const dayTasks = tasksByDate[key] ?? [];
           const partnerMood = partnerMoodByDate[key];
           const festivals = getFestivalsForDate(key);
-          const displayDots = dayEvents.slice(0, 3);
-          const extra = dayEvents.length - 3;
 
           return (
             <TouchableOpacity key={day} style={s.cell} onPress={() => onDayPress(cellDate)} activeOpacity={0.7}>
@@ -437,26 +462,65 @@ function MonthView({ viewDate, selected, eventsByDate, tasksByDate, partnerMoodB
                 ]}>{day}</Text>
               </View>
 
-              {/* Festival emoji */}
-              {festivals.length > 0 && (
-                <Text style={s.festivalDot}>{festivals[0].emoji}</Text>
-              )}
-
-              {/* Event dots + task squares + mood dot */}
-              {(displayDots.length > 0 || dayTasks.length > 0 || partnerMood !== undefined) && (
-                <View style={s.dots}>
-                  {displayDots.map((e, di) => (
-                    <View key={di} style={[s.dot, { backgroundColor: categoryColor(e) }]} />
+              {/* Event preview pills or badges */}
+              {dayEvents.length > 0 ? (
+                <View style={{ width: '100%', paddingHorizontal: 1, marginTop: 2, gap: 2 }}>
+                  {dayEvents.slice(0, 2).map((e, di) => (
+                    <View
+                      key={di}
+                      style={{
+                        backgroundColor: categoryColor(e) + '22',
+                        borderRadius: 4,
+                        paddingHorizontal: 3,
+                        paddingVertical: 1.5,
+                        borderLeftWidth: 2,
+                        borderLeftColor: categoryColor(e),
+                      }}
+                    >
+                      <Text
+                        style={{ fontSize: 9, fontWeight: '700', color: colors.text }}
+                        numberOfLines={1}
+                      >
+                        {categoryEmoji(e)} {e.title}
+                      </Text>
+                    </View>
                   ))}
-                  {dayTasks.length > 0 && (
-                    <View style={{ width: 5, height: 5, borderRadius: 1, backgroundColor: '#10B981' }} />
-                  )}
-                  {partnerMood !== undefined && (
-                    <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: partnerMood >= 7 ? '#FB7185' : partnerMood >= 4 ? '#F59E0B' : '#60A5FA' }} />
+                  {dayEvents.length > 2 && (
+                    <Text style={{ fontSize: 8, color: colors.rose, fontWeight: '800', textAlign: 'center', marginTop: 1 }}>
+                      +{dayEvents.length - 2} more
+                    </Text>
                   )}
                 </View>
+              ) : (
+                <>
+                  {/* Festival tag */}
+                  {festivals.length > 0 && (
+                    <View style={{ backgroundColor: '#F9731618', borderRadius: 4, paddingHorizontal: 3, paddingVertical: 1, marginTop: 2, alignItems: 'center', width: '100%' }}>
+                      <Text style={{ fontSize: 8, color: '#F97316', fontWeight: '700' }} numberOfLines={1}>
+                        {festivals[0].emoji} {festivals[0].name}
+                      </Text>
+                    </View>
+                  )}
+
+                  {/* Task & mood indicators */}
+                  {(dayTasks.length > 0 || partnerMood !== undefined) && (
+                    <View style={{ flexDirection: 'row', gap: 3, marginTop: 3, alignItems: 'center', justifyContent: 'center' }}>
+                      {dayTasks.length > 0 && (
+                        <View style={{ backgroundColor: '#10B98120', borderRadius: 3, paddingHorizontal: 3, paddingVertical: 1 }}>
+                          <Text style={{ fontSize: 8, color: '#10B981', fontWeight: '700' }}>✓ {dayTasks.length}</Text>
+                        </View>
+                      )}
+                      {partnerMood !== undefined && (
+                        <View style={{ backgroundColor: partnerMood >= 7 ? '#FB718520' : partnerMood >= 4 ? '#F59E0B20' : '#60A5FA20', borderRadius: 3, paddingHorizontal: 3, paddingVertical: 1 }}>
+                          <Text style={{ fontSize: 8, fontWeight: '700', color: partnerMood >= 7 ? '#FB7185' : partnerMood >= 4 ? '#F59E0B' : '#60A5FA' }}>
+                            {partnerMood >= 8 ? '😄' : partnerMood >= 6 ? '🙂' : partnerMood >= 4 ? '😐' : '😕'}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
+                </>
               )}
-              {extra > 0 && <Text style={s.moreText}>+{extra}</Text>}
             </TouchableOpacity>
           );
         })}
@@ -621,42 +685,69 @@ function AgendaView({ eventsByDate, onAdd, onEventPress, s, colors, getFestivals
 
   return (
     <ScrollView style={s.agendaScroll} contentContainerStyle={{ paddingBottom: TAB_BAR_HEIGHT + space.xl }}>
+      {/* Section header */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: space.lg, paddingTop: space.sm, paddingBottom: space.md }}>
+        <Text style={{ fontSize: 24, fontStyle: 'italic', fontWeight: '700', color: colors.text }}>Shared Events</Text>
+        <Text style={{ fontSize: 12, fontWeight: '800', color: colors.rose, letterSpacing: 0.5 }}>SEE ALL</Text>
+      </View>
+
       {days.map(({ date, events, festivals }) => (
         <View key={toDateKey(date)}>
-          {/* Date header */}
-          <View style={s.agendaDateHeader}>
-            <Text style={s.agendaDateDay}>{fmtDateMed(date)}</Text>
-            {festivals.map((f, i) => (
-              <Text key={i} style={s.agendaDateFestival}>{f.emoji} {f.name}</Text>
-            ))}
-          </View>
-
-          {/* Festival row (if any but no events) */}
-          {events.length === 0 && festivals.length > 0 && (
-            <View style={[s.agendaEvt, { marginBottom: 8 }]}>
+          {/* Festival rows */}
+          {festivals.map((f, i) => (
+            <View key={i} style={[s.agendaEvt, { marginBottom: 8 }]}>
               <View style={[s.agendaEvtBar, { backgroundColor: '#F97316' }]} />
               <View style={s.agendaEvtContent}>
-                <Text style={s.agendaEvtTitle}>{festivals.map(f => `${f.emoji} ${f.name}`).join(' · ')}</Text>
+                <Text style={s.agendaEvtTitle}>{f.emoji} {f.name}</Text>
+                <Text style={s.agendaEvtTime}>{fmtDateMed(date)}</Text>
               </View>
             </View>
-          )}
-
-          {/* Events */}
-          {events.map(e => (
-            <TouchableOpacity key={e.id} style={s.agendaEvt} onPress={() => onEventPress(e)} activeOpacity={0.7}>
-              <View style={[s.agendaEvtBar, { backgroundColor: categoryColor(e) }]} />
-              <View style={s.agendaEvtContent}>
-                <View style={s.agendaEvtHeader}>
-                  <Text style={s.agendaEvtEmoji}>{categoryEmoji(e)}</Text>
-                  <Text style={s.agendaEvtTitle}>{e.title}</Text>
-                </View>
-                {!e.all_day && (
-                  <Text style={s.agendaEvtTime}>{fmtTime(e.start_dt)} — {fmtTime(e.end_dt)}</Text>
-                )}
-                {e.all_day && <Text style={s.agendaEvtTime}>All day</Text>}
-              </View>
-            </TouchableOpacity>
           ))}
+
+          {/* Figma-style event cards */}
+          {events.map(e => {
+            const d = new Date(e.start_dt);
+            const mon = MONTHS_SHORT[d.getMonth()].toUpperCase();
+            const day = d.getDate();
+            return (
+              <TouchableOpacity
+                key={e.id}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginHorizontal: space.lg,
+                  marginBottom: space.sm,
+                  backgroundColor: colors.surface,
+                  borderRadius: 20,
+                  padding: 16,
+                  borderWidth: 1,
+                  borderColor: colors.line,
+                  gap: 14,
+                }}
+                onPress={() => onEventPress(e)}
+                activeOpacity={0.7}
+              >
+                {/* Coral date block */}
+                <View style={{
+                  width: 52, height: 52, borderRadius: 14,
+                  backgroundColor: categoryColor(e),
+                  alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Text style={{ fontSize: 10, fontWeight: '800', color: 'rgba(255,255,255,0.8)', letterSpacing: 0.5 }}>{mon}</Text>
+                  <Text style={{ fontSize: 20, fontWeight: '900', color: '#fff', lineHeight: 22 }}>{day}</Text>
+                </View>
+                {/* Event info */}
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text, marginBottom: 3 }}>
+                    {categoryEmoji(e)} {e.title}
+                  </Text>
+                  {!e.all_day && (
+                    <Text style={{ fontSize: 12, color: colors.muted }}>{fmtTime(e.start_dt)}</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       ))}
     </ScrollView>
@@ -970,11 +1061,23 @@ export default function CalendarScreen() {
   ).current;
 
   const animateSlide = (direction: 'left' | 'right', callback: () => void) => {
-    const toValue = direction === 'left' ? -SCREEN_W : SCREEN_W;
-    Animated.timing(slideAnim, { toValue, duration: 200, useNativeDriver: true }).start(() => {
+    const toValue = direction === 'left' ? -SCREEN_W * 0.75 : SCREEN_W * 0.75;
+    Animated.spring(slideAnim, {
+      toValue,
+      useNativeDriver: true,
+      damping: 24,
+      stiffness: 220,
+      mass: 0.8,
+    }).start(() => {
       slideAnim.setValue(-toValue);
       callback();
-      Animated.timing(slideAnim, { toValue: 0, duration: 200, useNativeDriver: true }).start();
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+        damping: 24,
+        stiffness: 220,
+        mass: 0.8,
+      }).start();
     });
   };
 
@@ -1036,27 +1139,27 @@ export default function CalendarScreen() {
 
   return (
     <SafeAreaView style={s.root} edges={['top']}>
-      {/* Header */}
-      <View style={s.header}>
-        <TouchableOpacity onPress={viewMode === 'month' ? goPrevMonth : goPrevWeek} style={s.navBtn} activeOpacity={0.7}>
-          <Ionicons name="chevron-back" size={20} color={colors.text} />
-        </TouchableOpacity>
-
-        <Text style={s.monthTitle}>{navTitle}</Text>
-
-        <TouchableOpacity onPress={viewMode === 'month' ? goNextMonth : goNextWeek} style={s.navBtn} activeOpacity={0.7}>
-          <Ionicons name="chevron-forward" size={20} color={colors.text} />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={s.todayBtn} onPress={goToToday} activeOpacity={0.7}>
-          <Text style={s.todayBtnText}>Today</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={s.addBtn} onPress={() => openAdd()} activeOpacity={0.8}>
-          <Ionicons name="add" size={20} color="#fff" />
-        </TouchableOpacity>
-
-        <HamburgerButton />
+      {/* Header — Figma "Our Timeline" */}
+      <View style={[s.header, { alignItems: 'flex-end', paddingBottom: 8 }]}>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 32, fontStyle: 'italic', fontWeight: '700', color: colors.text, letterSpacing: -0.5 }}>
+            Our Timeline
+          </Text>
+          <Text style={{ fontSize: 11, fontWeight: '700', color: colors.muted, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 2 }}>
+            {navTitle}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+          <TouchableOpacity onPress={viewMode === 'month' ? goPrevMonth : goPrevWeek} style={s.navBtn} activeOpacity={0.7}>
+            <Ionicons name="chevron-back" size={18} color={colors.textSec} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={viewMode === 'month' ? goNextMonth : goNextWeek} style={s.navBtn} activeOpacity={0.7}>
+            <Ionicons name="chevron-forward" size={18} color={colors.textSec} />
+          </TouchableOpacity>
+          <TouchableOpacity style={s.addBtn} onPress={() => openAdd()} activeOpacity={0.8}>
+            <Ionicons name="add" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Segmented control */}

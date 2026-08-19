@@ -67,9 +67,9 @@ export default function NotificationsScreen() {
   const load = async () => {
     try {
       const data = await api.get<Notification[]>('/api/notifications');
-      setNotifications(data);
+      setNotifications(Array.isArray(data) ? data : []);
     } catch {
-      Alert.alert('Error', 'Could not load notifications.');
+      setNotifications([]);
     } finally {
       setLoading(false);
     }

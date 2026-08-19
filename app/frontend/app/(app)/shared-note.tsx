@@ -43,14 +43,14 @@ export default function SharedNoteScreen() {
   const loadNote = async () => {
     try {
       const data = await api.get<{ content: string; updated_at?: string; updated_by?: string }>('/api/shared-note');
-      setContent(data.content || '');
-      lastServerTime.current = data.updated_at || null;
-      if (data.updated_at) {
+      setContent(data?.content || '');
+      lastServerTime.current = data?.updated_at || null;
+      if (data?.updated_at) {
         const timeFmt = new Date(data.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         setEditInfo({ time: timeFmt, name: data.updated_by === user?.user_id ? 'You' : 'Partner' });
       }
     } catch {
-      Alert.alert('Error', 'Could not load shared note.');
+      setContent('');
     } finally {
       setLoading(false);
     }
@@ -135,9 +135,16 @@ export default function SharedNoteScreen() {
         <Pressable onPress={() => router.back()} style={s.backBtn} hitSlop={12}>
           <Ionicons name="arrow-back" size={22} color={colors.text} />
         </Pressable>
-        <View style={{ flex: 1 }}>
-          <Text style={[s.title, { color: colors.text }]}>Shared Note 📝</Text>
-          <Text style={{ fontSize: 11, color: colors.muted, marginTop: 1 }}>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <Text 
+            style={[s.title, { color: colors.text }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.85}
+          >
+            Shared Note 📝
+          </Text>
+          <Text style={{ fontSize: 11, color: colors.muted, marginTop: 1 }} numberOfLines={1}>
             {saveStatus === 'saving' ? 'Saving changes…' : saveStatus === 'saved' ? 'Saved! ✨' : editInfo.time ? `Last edited by ${editInfo.name} at ${editInfo.time}` : 'Collaborative notepad'}
           </Text>
         </View>
@@ -214,7 +221,7 @@ export default function SharedNoteScreen() {
 
 const s = StyleSheet.create({
   root: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, paddingVertical: space.md, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(0,0,0,0.1)' },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, paddingVertical: space.md, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(255,255,255,0.07)' },
   backBtn: { width: 40, height: 40, justifyContent: 'center' },
   syncBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   title: { fontSize: 18, fontWeight: '800' },

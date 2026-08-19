@@ -1,4 +1,5 @@
 import * as Haptics from 'expo-haptics';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -46,14 +47,14 @@ export function Input({
   editable = true,
   numberOfLines,
 }: InputProps) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const [focused, setFocused] = useState(false);
   const [secure, setSecure] = useState(secureTextEntry);
 
-  // Floating label animation
+  // Floating label & glow animations
   const labelAnim = useRef(new Animated.Value(value ? 1 : 0)).current;
-  // Border glow (JS driver — cannot use native driver on borderColor)
   const glowAnim = useRef(new Animated.Value(0)).current;
+  const focusScale = useRef(new Animated.Value(1)).current;
 
   const hasValue = value.length > 0;
   const floated = focused || hasValue;
@@ -62,17 +63,25 @@ export function Input({
     Animated.spring(labelAnim, {
       toValue: floated ? 1 : 0,
       useNativeDriver: true,
-      damping: 18,
-      stiffness: 200,
+      damping: 20,
+      stiffness: 220,
     }).start();
   }, [floated]);
 
   useEffect(() => {
-    Animated.timing(glowAnim, {
-      toValue: focused ? 1 : 0,
-      duration: 200,
-      useNativeDriver: false, // borderColor is not supported by native driver
-    }).start();
+    Animated.parallel([
+      Animated.timing(glowAnim, {
+        toValue: focused ? 1 : 0,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.spring(focusScale, {
+        toValue: focused ? 1.015 : 1,
+        useNativeDriver: true,
+        damping: 16,
+        stiffness: 240,
+      }),
+    ]).start();
   }, [focused]);
 
   const handleFocus = () => {
@@ -83,7 +92,10 @@ export function Input({
 
   const borderColor = glowAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [error ? colors.rose : colors.line, error ? colors.rose : colors.rose],
+    outputRange: [
+      error ? colors.rose : isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+      error ? colors.rose : colors.rose,
+    ],
   });
 
   const labelTranslateY = labelAnim.interpolate({
@@ -94,21 +106,41 @@ export function Input({
     inputRange: [0, 1],
     outputRange: [1, 0.78],
   });
-  const labelColor = focused ? colors.rose : error ? colors.rose : colors.muted;
+  const labelColor = focused
+    ? colors.rose
+    : error
+    ? colors.rose
+    : colors.muted;
 
   const showFloatingLabel = !!label && !multiline;
 
   return (
     <View style={[styles.container, multiline && { alignItems: 'stretch' }]}>
+      {!showFloatingLabel && label && (
+        <Text style={[styles.staticLabel, { color: colors.textSec }]}>{label}</Text>
+      )}
+
       <Animated.View
         style={[
           styles.inputWrap,
           {
-            backgroundColor: 'rgba(255,255,255,0.06)',
+            backgroundColor: isDark
+              ? focused
+                ? colors.surface2
+                : colors.surface
+              : focused
+              ? 'rgba(255,255,255,0.95)'
+              : colors.surface,
             borderColor,
             borderWidth: focused ? 1.5 : 1,
-            minHeight: multiline ? 80 : 52,
+            minHeight: multiline ? 116 : 56,
             paddingTop: showFloatingLabel && floated ? 18 : 0,
+            shadowColor: error ? colors.rose : colors.rose,
+            shadowOpacity: focused ? 0.16 : 0,
+            shadowRadius: focused ? 14 : 0,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: focused ? 3 : 0,
+            transform: [{ scale: focusScale }],
           },
           !editable && styles.disabled,
         ]}
@@ -133,16 +165,12 @@ export function Input({
           </Animated.Text>
         )}
 
-        {!showFloatingLabel && label && (
-          <Text style={[styles.staticLabel, { color: colors.textSec }]}>{label}</Text>
-        )}
-
         <TextInput
           style={[
             styles.input,
             { color: colors.text },
             icon ? styles.inputWithLeftIcon : null,
-            (rightIcon || secureTextEntry) ? styles.inputWithRightIcon : null,
+            rightIcon || secureTextEntry ? styles.inputWithRightIcon : null,
             multiline && styles.multiline,
           ]}
           value={value}
@@ -151,7 +179,7 @@ export function Input({
           placeholderTextColor={colors.muted}
           secureTextEntry={secure}
           multiline={multiline}
-          numberOfLines={multiline ? (numberOfLines ?? 4) : 1}
+          numberOfLines={multiline ? numberOfLines ?? 4 : 1}
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           autoCorrect={false}
@@ -164,27 +192,35 @@ export function Input({
 
         {secureTextEntry && (
           <Pressable
-            onPress={() => setSecure(s => !s)}
+            onPress={() => {
+              setSecure(s => !s);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={secure ? 'Show password' : 'Hide password'}
             style={styles.rightIcon}
-            hitSlop={8}
+            hitSlop={12}
           >
-            <Text style={{ fontSize: 13, color: colors.muted, fontWeight: '600' }}>{secure ? 'SHOW' : 'HIDE'}</Text>
+            <Ionicons
+              name={secure ? 'eye-outline' : 'eye-off-outline'}
+              size={21}
+              color={focused ? colors.rose : colors.muted}
+            />
           </Pressable>
         )}
 
         {!secureTextEntry && rightIcon && (
-          <Pressable
-            onPress={onRightIconPress}
-            style={styles.rightIcon}
-            hitSlop={8}
-          >
+          <Pressable onPress={onRightIconPress} style={styles.rightIcon} hitSlop={8}>
             {rightIcon}
           </Pressable>
         )}
       </Animated.View>
 
       {error ? (
-        <Text style={[styles.errorText, { color: colors.rose }]}>❌ {error}</Text>
+        <View style={styles.errorRow}>
+          <Ionicons name="alert-circle-outline" size={15} color={colors.rose} />
+          <Text style={[styles.errorText, { color: colors.rose }]}>{error}</Text>
+        </View>
       ) : null}
     </View>
   );
@@ -199,21 +235,21 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 1.2,
     textTransform: 'uppercase',
-    marginBottom: 2,
+    marginBottom: 4,
+    marginLeft: 2,
   },
   floatingLabel: {
     position: 'absolute',
-    left: space.md,
+    left: space.md + 2,
     top: 16,
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: '600',
     zIndex: 1,
-    transformOrigin: 'left center',
   },
   inputWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 14,
+    borderRadius: radius.xl,
     position: 'relative',
   },
   disabled: {
@@ -248,7 +284,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 12,
-    marginTop: 2,
     fontWeight: '500',
   },
+  errorRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2, marginLeft: 2 },
 });

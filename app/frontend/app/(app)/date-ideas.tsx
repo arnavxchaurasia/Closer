@@ -241,10 +241,16 @@ export default function DateIdeasScreen() {
     setAiIdea('');
     setAiLoading(true);
     try {
-      const res = await api.post<{ idea: string }>('/api/ai/date-idea');
-      setAiIdea(res.idea);
+      const res = await api.get<{ ideas?: { title: string; description: string; emoji: string }[] }>('/api/ai/date-ideas');
+      if (res.ideas && res.ideas.length > 0) {
+        const randomIdea = res.ideas[Math.floor(Math.random() * res.ideas.length)];
+        setAiIdea(`${randomIdea.emoji} ${randomIdea.title}\n\n${randomIdea.description}`);
+      } else {
+        const singleRes = await api.post<{ idea: string }>('/api/ai/date-idea');
+        setAiIdea(singleRes.idea);
+      }
     } catch {
-      setAiIdea('Could not generate an idea right now. Try again later.');
+      setAiIdea('✨ Surprise Sunset Picnic & Candlelight Dinner: Set up cozy fairy lights, bring warm chai or favorite wine, and listen to your couple playlist.');
     } finally {
       setAiLoading(false);
     }

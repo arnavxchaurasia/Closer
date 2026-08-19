@@ -135,8 +135,6 @@ export default function OpenWhenScreen() {
   const { user } = useAuth();
   const { isPaired, isLoading: coupleLoading } = useCouple();
   const s = useMemo(() => makeStyles(colors), [colors]);
-  if (coupleLoading) return null;
-  if (!isPaired) return <NotConnected message="Open When letters are written for your partner. Connect to get started." />;
 
   const [received, setReceived] = useState<Letter[]>([]);
   const [written, setWritten] = useState<Letter[]>([]);
@@ -233,6 +231,9 @@ export default function OpenWhenScreen() {
   );
 
   const activeLabel = fPrompt || fCustom.trim();
+
+  if (coupleLoading) return null;
+  if (!isPaired) return <NotConnected message="Open When letters are written for your partner. Connect to get started." />;
 
   return (
     <SafeAreaView style={s.root} edges={['top']}>

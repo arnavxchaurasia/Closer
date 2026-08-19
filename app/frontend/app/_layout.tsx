@@ -3,18 +3,31 @@ import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 import { Stack, router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import * as SplashScreen from 'expo-splash-screen';
-import { LogBox, Platform, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, Text, View } from 'react-native';
 
 import { LaunchScreen } from '@/src/components/LaunchScreen';
+import { Sonner, sonner } from '@/src/components/Sonner';
 import { AuthProvider, useAuth } from '@/src/context/AuthContext';
 import { CoupleProvider } from '@/src/context/CoupleContext';
 import { ThemeProvider } from '@/src/context/ThemeContext';
 import { useIconFonts } from '@/src/hooks/use-icon-fonts';
 import { registerForPushNotifications, scheduleDailyCheckIn } from '@/src/notifications';
 
-LogBox.ignoreAllLogs(true);
-
 SplashScreen.preventAutoHideAsync();
+
+// Keep native confirmation dialogs (which require a decision), but replace
+// informational alerts everywhere with unobtrusive Sonner-style notifications.
+const nativeAlert = Alert.alert.bind(Alert);
+Alert.alert = ((...args: Parameters<typeof Alert.alert>) => {
+  const [title, message, buttons] = args;
+  if (!buttons) {
+    const text = typeof message === 'string' ? message : undefined;
+    const kind = /error|failed|invalid|could not|permission|offline/i.test(`${title} ${text ?? ''}`) ? 'error' : 'info';
+    sonner.show(title, text, kind);
+    return;
+  }
+  nativeAlert(...args);
+}) as typeof Alert.alert;
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? '';
 
@@ -42,12 +55,16 @@ class ErrorBoundary extends Component<
   static getDerivedStateFromError(error: Error) {
     return { hasError: true, error: error.message };
   }
+  reset = () => this.setState({ hasError: false, error: '' });
   render() {
     if (this.state.hasError) {
       return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0F0818', padding: 24 }}>
           <Text style={{ color: '#E8607A', fontSize: 20, fontWeight: '800', marginBottom: 12 }}>Something went wrong</Text>
           <Text style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14, textAlign: 'center' }}>{this.state.error}</Text>
+          <Pressable onPress={this.reset} style={{ marginTop: 24, backgroundColor: '#E8607A', borderRadius: 14, paddingHorizontal: 22, paddingVertical: 13 }}>
+            <Text style={{ color: '#fff', fontWeight: '800' }}>Try again</Text>
+          </Pressable>
         </View>
       );
     }
@@ -70,16 +87,20 @@ function RootNavigator() {
     }
   }, [ready]);
 
+  const initialRedirectDone = React.useRef(false);
+
   useEffect(() => {
     if (!ready) return;
-    // Small delay to ensure router is fully mounted before navigating
-    const timer = setTimeout(() => {
-      try {
-        if (!user) router.replace('/(auth)');
-        else router.replace('/(app)');
-      } catch {}
-    }, 100);
-    return () => clearTimeout(timer);
+    if (!initialRedirectDone.current) {
+      initialRedirectDone.current = true;
+      const timer = setTimeout(() => {
+        try {
+          if (!user) router.replace('/onboarding');
+          else router.replace('/(app)');
+        } catch {}
+      }, 100);
+      return () => clearTimeout(timer);
+    }
   }, [ready, user]);
 
   if (!ready) return <LaunchScreen />;
@@ -96,29 +117,28 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
-  if (!CLERK_PUBLISHABLE_KEY) {
-    // Fallback if key is missing — show error instead of crashing
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0F0818', padding: 24 }}>
-        <Text style={{ color: '#E8607A', fontSize: 18, fontWeight: '800' }}>Missing Clerk Key</Text>
-        <Text style={{ color: 'rgba(255,255,255,0.5)', marginTop: 8 }}>EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY not set</Text>
-      </View>
-    );
-  }
+  const content = (
+    <ThemeProvider>
+      <AuthProvider>
+        <CoupleProvider>
+          <View style={{ flex: 1 }}>
+            <RootNavigator />
+            <Sonner />
+          </View>
+        </CoupleProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  );
 
   return (
     <ErrorBoundary>
-      <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
-        <ClerkLoaded>
-          <ThemeProvider>
-            <AuthProvider>
-              <CoupleProvider>
-                <RootNavigator />
-              </CoupleProvider>
-            </AuthProvider>
-          </ThemeProvider>
-        </ClerkLoaded>
-      </ClerkProvider>
+      {CLERK_PUBLISHABLE_KEY ? (
+        <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+          <ClerkLoaded>{content}</ClerkLoaded>
+        </ClerkProvider>
+      ) : (
+        content
+      )}
     </ErrorBoundary>
   );
 }

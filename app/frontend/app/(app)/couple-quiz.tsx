@@ -25,7 +25,7 @@ import { Colors, radius, space } from '@/src/theme';
 
 // ─── Question Bank ────────────────────────────────────────────────────────────
 
-type Category = 'deep' | 'fun' | 'spicy' | 'relationship' | 'dreams' | 'memories' | 'wyr' | 'truth_dare';
+type Category = 'deep' | 'fun' | 'spicy' | 'relationship' | 'dreams' | 'memories' | 'wyr' | 'truth_dare' | 'ai';
 
 const QUESTIONS: Record<Category, string[]> = {
   deep: [
@@ -227,6 +227,13 @@ const QUESTIONS: Record<Category, string[]> = {
     "List 5 nicknames you'd give me that I'd actually like.",
     "Describe our relationship to an alien who has never heard of love.",
   ],
+  ai: [
+    "What is your partner's ultimate comfort food when stressed?",
+    "What was your partner's first impression of you?",
+    "What is your dream Himalayan or beach vacation together?",
+    "What is the small daily gesture that makes you feel most loved?",
+    "If you two could start a passion project together, what would it be?",
+  ],
 };
 
 // ─── Category Meta ─────────────────────────────────────────────────────────────
@@ -247,6 +254,7 @@ const CATEGORY_META: Record<Category, CategoryMeta> = {
   memories:     { emoji: '📸', label: 'Memories',         gradientStart: '#0D9488', gradientEnd: '#14B8A6' },
   wyr:          { emoji: '🤔', label: 'Would You Rather', gradientStart: '#0369A1', gradientEnd: '#0EA5E9' },
   truth_dare:   { emoji: '🎲', label: 'Truth or Dare',    gradientStart: '#7C3AED', gradientEnd: '#C026D3' },
+  ai:           { emoji: '✨', label: 'AI Infinite Quiz',  gradientStart: '#EC4899', gradientEnd: '#F43F5E' },
 };
 
 const CATEGORIES = Object.keys(CATEGORY_META) as Category[];
@@ -471,7 +479,7 @@ function SwipeCard({ question, category, isTop, stackOffset, onSwipeLeft, onSwip
           <Animated.View style={{
             position: 'absolute', top: 24, left: 24,
             opacity: nopeOpacity,
-            backgroundColor: '#6B7280', borderRadius: radius.md,
+            backgroundColor: colors.surface2, borderRadius: radius.md,
             paddingHorizontal: 12, paddingVertical: 6,
           }}>
             <Text style={{ color: '#fff', fontSize: 18, fontWeight: '800' }}>SKIP →</Text>

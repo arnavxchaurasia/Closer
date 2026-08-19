@@ -368,7 +368,7 @@ export default function UsScreen() {
         {/* ── Section 1: Hero ── */}
         <FadeSlide delay={60}>
           <View style={s.heroWrap}>
-            <LinearGradient colors={['#BE185D', '#E8607A', '#FB923C']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.heroGrad}>
+            <LinearGradient colors={[colors.rose, colors.rose, colors.rose]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.heroGrad}>
               <Text style={s.heroLabel}>TOGETHER SINCE</Text>
               <Text style={s.heroDays}>{daysTogether ?? '—'}</Text>
               <Text style={s.heroSub}>days of us 💕</Text>
@@ -706,15 +706,15 @@ export default function UsScreen() {
                       {/* Best Moment */}
                       <View style={{ backgroundColor: colors.surface2, borderRadius: radius.md, padding: 10, borderWidth: 1, borderColor: colors.line }}>
                         <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textSec, marginBottom: 4 }}>Best Moment</Text>
-                        <Text style={{ fontSize: 13, color: colors.text, fontStyle: 'italic', marginBottom: 6 }}>Me: "{checkinStatus.my_checkin.best_moment}"</Text>
-                        <Text style={{ fontSize: 13, color: colors.text, fontStyle: 'italic' }}>Partner: "{checkinStatus.partner_checkin.best_moment}"</Text>
+                        <Text style={{ fontSize: 13, color: colors.text, fontStyle: 'italic', marginBottom: 6 }}>Me: &quot;{checkinStatus.my_checkin.best_moment}&quot;</Text>
+                        <Text style={{ fontSize: 13, color: colors.text, fontStyle: 'italic' }}>Partner: &quot;{checkinStatus.partner_checkin.best_moment}&quot;</Text>
                       </View>
 
                       {/* Appreciation */}
                       <View style={{ backgroundColor: colors.surface2, borderRadius: radius.md, padding: 10, borderWidth: 1, borderColor: colors.line }}>
                         <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textSec, marginBottom: 4 }}>Appreciation</Text>
-                        <Text style={{ fontSize: 13, color: colors.text, fontStyle: 'italic', marginBottom: 6 }}>Me: "{checkinStatus.my_checkin.appreciation}"</Text>
-                        <Text style={{ fontSize: 13, color: colors.text, fontStyle: 'italic' }}>Partner: "{checkinStatus.partner_checkin.appreciation}"</Text>
+                        <Text style={{ fontSize: 13, color: colors.text, fontStyle: 'italic', marginBottom: 6 }}>Me: &quot;{checkinStatus.my_checkin.appreciation}&quot;</Text>
+                        <Text style={{ fontSize: 13, color: colors.text, fontStyle: 'italic' }}>Partner: &quot;{checkinStatus.partner_checkin.appreciation}&quot;</Text>
                       </View>
                     </>
                   ) : (
@@ -724,7 +724,7 @@ export default function UsScreen() {
                         Waiting for partner to check in
                       </Text>
                       <Text style={{ fontSize: 13, color: colors.textSec, textAlign: 'center', lineHeight: 20 }}>
-                        You've completed your weekly check-in! Once your partner submits theirs, the comparison will be revealed here.
+                        You&apos;ve completed your weekly check-in! Once your partner submits theirs, the comparison will be revealed here.
                       </Text>
                     </View>
                   )}
@@ -820,7 +820,7 @@ export default function UsScreen() {
           </View>
 
           <Text style={{ color: colors.textSec, marginBottom: space.lg, fontSize: 15, lineHeight: 22 }}>
-            When will you next be together? We'll count down to your reunion. ✈️
+            When will you next be together? We&apos;ll count down to your reunion. ✈️
           </Text>
 
           <DateField

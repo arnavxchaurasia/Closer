@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -11,7 +11,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -25,18 +24,6 @@ import { useCouple } from '@/src/context/CoupleContext';
 import { useTheme } from '@/src/context/ThemeContext';
 import { haptics } from '@/src/haptics';
 import { radius, space } from '@/src/theme';
-
-function FadeSlide({ delay = 0, children, style }: { delay?: number; children: React.ReactNode; style?: any }) {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(20)).current;
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(opacity, { toValue: 1, duration: 350, delay, useNativeDriver: true }),
-      Animated.timing(translateY, { toValue: 0, duration: 350, delay, useNativeDriver: true }),
-    ]).start();
-  }, []);
-  return <Animated.View style={[{ opacity, transform: [{ translateY }] }, style]}>{children}</Animated.View>;
-}
 
 interface Trip {
   trip_id: string;
@@ -57,7 +44,7 @@ function getCountdown(dateStr: string) {
 
 export default function TripPlannerScreen() {
   const { colors } = useTheme();
-  const { isPaired } = useCouple();
+  const { isPaired, isLoading: coupleLoading } = useCouple();
 
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,9 +62,9 @@ export default function TripPlannerScreen() {
   const load = async () => {
     try {
       const data = await api.get<Trip[]>('/api/trips');
-      setTrips(data);
+      setTrips(Array.isArray(data) ? data : []);
     } catch {
-      Alert.alert('Error', 'Could not load trips.');
+      setTrips([]);
     } finally {
       setLoading(false);
     }
@@ -196,6 +183,7 @@ export default function TripPlannerScreen() {
     ]);
   };
 
+  if (coupleLoading) return null;
   if (!isPaired) {
     return <NotConnected message="Connect with your partner to plan trips." />;
   }
@@ -397,7 +385,7 @@ const s = StyleSheet.create({
   checkText: { fontSize: 14 },
   nextTag: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 3, borderRadius: radius.md, marginBottom: 8 },
   nextTagText: { fontSize: 9, fontWeight: '900', color: '#fff' },
-  modalBg: { flex: 1, backgroundColor: '#fff' },
+  modalBg: { flex: 1 },
   modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: space.lg, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.05)' },
   modalHeaderTitle: { fontSize: 18, fontWeight: '800' },
   fLabel: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },

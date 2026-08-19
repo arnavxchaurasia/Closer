@@ -104,7 +104,7 @@ export default function HeartbeatScreen() {
     : 'Hold me';
 
   if (coupleLoading || !isPaired) return (
-    <View style={{ flex: 1, backgroundColor: '#0A0A0A' }}>
+    <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
         {!coupleLoading && <NotConnected />}
       </SafeAreaView>
@@ -112,7 +112,7 @@ export default function HeartbeatScreen() {
   );
 
   return (
-    <View style={[s.container, { backgroundColor: '#0A0A0A' }]}>
+    <View style={[s.container, { backgroundColor: colors.bg }]}>
       <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
         {/* Back */}
         <Pressable onPress={() => router.back()} style={s.back} hitSlop={8}>

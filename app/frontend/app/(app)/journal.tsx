@@ -57,9 +57,9 @@ function makeStyles(c: Colors) {
     tabBtnText: { fontSize: 13, fontWeight: '600', color: c.muted },
     tabBtnTextActive: { color: '#fff' },
     // Dream card
-    dreamCard: { backgroundColor: '#1E1B4B', borderRadius: radius.xl, padding: space.md, marginBottom: space.sm, marginHorizontal: space.lg, borderWidth: 1, borderColor: '#3730A3' },
-    dreamDate: { fontSize: 11, color: '#A5B4FC' },
-    dreamBody: { fontSize: 14, color: '#C7D2FE', fontStyle: 'italic', lineHeight: 21, marginTop: 4 },
+    dreamCard: { backgroundColor: c.surface, borderRadius: radius.xl, padding: space.md, marginBottom: space.sm, marginHorizontal: space.lg, borderWidth: 1, borderColor: c.line },
+    dreamDate: { fontSize: 11, color: c.textSec },
+    dreamBody: { fontSize: 14, color: c.text, fontStyle: 'italic', lineHeight: 21, marginTop: 4 },
   });
 }
 
@@ -223,19 +223,19 @@ export default function JournalScreen() {
             {/* Ask Aria button */}
             <TouchableOpacity
               onPress={analyzeDreams}
-              style={{ marginHorizontal: space.lg, marginBottom: space.md, backgroundColor: '#312E81', borderRadius: radius.lg, paddingVertical: 12, paddingHorizontal: space.lg, flexDirection: 'row', alignItems: 'center', gap: 10 }}
+              style={{ marginHorizontal: space.lg, marginBottom: space.md, backgroundColor: colors.surface, borderRadius: radius.lg, paddingVertical: 12, paddingHorizontal: space.lg, flexDirection: 'row', alignItems: 'center', gap: 10 }}
               activeOpacity={0.8}
             >
               <Text style={{ fontSize: 18 }}>✨</Text>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#C7D2FE', flex: 1 }}>Ask Aria to analyze my dreams</Text>
-              <Ionicons name="chevron-forward" size={16} color="#A5B4FC" />
+              <Text style={{ fontSize: 14, fontWeight: '700', color: colors.text, flex: 1 }}>Ask Aria to analyze my dreams</Text>
+              <Ionicons name="chevron-forward" size={16} color={colors.textSec} />
             </TouchableOpacity>
 
             {dreams.length === 0 && (
-              <View style={{ margin: space.lg, alignItems: 'center', gap: space.sm, backgroundColor: '#1E1B4B', borderRadius: radius.xl, padding: space.xxl, borderWidth: 1, borderColor: '#3730A3' }}>
+              <View style={{ margin: space.lg, alignItems: 'center', gap: space.sm, backgroundColor: colors.surface, borderRadius: radius.xl, padding: space.xxl, borderWidth: 1, borderColor: colors.line }}>
                 <Text style={{ fontSize: 36 }}>🌙</Text>
-                <Text style={{ fontSize: 16, fontWeight: '700', color: '#C7D2FE' }}>Dream log</Text>
-                <Text style={{ fontSize: 13, color: '#A5B4FC', textAlign: 'center' }}>Record your dreams and let Aria find patterns in your subconscious.</Text>
+                <Text style={{ fontSize: 16, fontWeight: '700', color: colors.text }}>Dream log</Text>
+                <Text style={{ fontSize: 13, color: colors.textSec, textAlign: 'center' }}>Record your dreams and let Aria find patterns in your subconscious.</Text>
               </View>
             )}
             {dreams.map(dream => (
@@ -243,13 +243,13 @@ export default function JournalScreen() {
                 <Text style={s.dreamDate}>🌙 {new Date(dream.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</Text>
                 <Text style={s.dreamBody} numberOfLines={4}>{dream.content}</Text>
                 <Pressable onPress={() => del(dream.journal_id)} hitSlop={8} style={{ alignSelf: 'flex-end', marginTop: 8 }}>
-                  <Ionicons name="trash-outline" size={16} color="#A5B4FC" />
+                  <Ionicons name="trash-outline" size={16} color={colors.muted} />
                 </Pressable>
               </View>
             ))}
           </ScrollView>
 
-          <Pressable style={[s.fab, { backgroundColor: '#4338CA' }]} onPress={() => { setDreamText(''); setShowDreamModal(true); }}>
+          <Pressable style={[s.fab, { backgroundColor: colors.rose }]} onPress={() => { setDreamText(''); setShowDreamModal(true); }}>
             <Ionicons name="add" size={28} color="#fff" />
           </Pressable>
         </>
@@ -319,24 +319,24 @@ export default function JournalScreen() {
 
       {/* Dream Modal */}
       <Modal visible={showDreamModal} animationType="slide" presentationStyle="pageSheet">
-        <SafeAreaView style={[s.modalBg, { backgroundColor: '#0F0E2A' }]}>
+        <SafeAreaView style={s.modalBg}>
           <ScrollView contentContainerStyle={{ padding: space.lg, gap: space.md }} keyboardShouldPersistTaps="handled">
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: space.md }}>
-              <Text style={{ fontSize: 20, fontWeight: '700', color: '#C7D2FE', flex: 1 }}>🌙 Log a dream</Text>
-              <Pressable onPress={() => setShowDreamModal(false)}><Ionicons name="close" size={24} color="#A5B4FC" /></Pressable>
+              <Text style={{ fontSize: 20, fontWeight: '700', color: colors.text, flex: 1 }}>🌙 Log a dream</Text>
+              <Pressable onPress={() => setShowDreamModal(false)}><Ionicons name="close" size={24} color={colors.muted} /></Pressable>
             </View>
-            <Text style={[s.fLabel, { color: '#A5B4FC' }]}>What did you dream?</Text>
+            <Text style={s.fLabel}>What did you dream?</Text>
             <TextInput
-              style={{ backgroundColor: '#1E1B4B', borderRadius: radius.md, minHeight: 200, padding: space.md, color: '#C7D2FE', fontSize: 15, borderWidth: 1, borderColor: '#3730A3', textAlignVertical: 'top', fontStyle: 'italic' }}
+              style={{ backgroundColor: colors.surface2, borderRadius: radius.md, minHeight: 200, padding: space.md, color: colors.text, fontSize: 15, borderWidth: 1, borderColor: colors.line, textAlignVertical: 'top', fontStyle: 'italic' }}
               value={dreamText}
               onChangeText={setDreamText}
               placeholder="Describe your dream…"
-              placeholderTextColor="#6366F1"
+              placeholderTextColor={colors.muted}
               multiline
               autoFocus
             />
             <Pressable
-              style={{ backgroundColor: '#4338CA', borderRadius: radius.lg, height: 54, alignItems: 'center', justifyContent: 'center', marginTop: space.md, opacity: savingDream || !dreamText.trim() ? 0.6 : 1 }}
+              style={{ backgroundColor: colors.rose, borderRadius: radius.lg, height: 54, alignItems: 'center', justifyContent: 'center', marginTop: space.md, opacity: savingDream || !dreamText.trim() ? 0.6 : 1 }}
               onPress={saveDream}
               disabled={savingDream || !dreamText.trim()}
             >
@@ -349,15 +349,15 @@ export default function JournalScreen() {
       {/* Dream Analysis Modal */}
       <Modal visible={showAnalysisModal} animationType="fade" transparent>
         <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'center', padding: space.lg }} onPress={() => setShowAnalysisModal(false)}>
-          <Pressable style={{ backgroundColor: '#1E1B4B', borderRadius: radius.xl, padding: space.lg, borderWidth: 1, borderColor: '#3730A3' }} onPress={() => {}}>
-            <Text style={{ fontSize: 18, fontWeight: '800', color: '#C7D2FE', marginBottom: space.md }}>✨ Dream Analysis</Text>
+          <Pressable style={{ backgroundColor: colors.surface, borderRadius: radius.xl, padding: space.lg, borderWidth: 1, borderColor: colors.line }} onPress={() => {}}>
+            <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text, marginBottom: space.md }}>✨ Dream Analysis</Text>
             {fetchingAnalysis ? (
-              <Text style={{ color: '#A5B4FC', fontSize: 14 }}>Analyzing your dreams…</Text>
+              <Text style={{ color: colors.textSec, fontSize: 14 }}>Analyzing your dreams…</Text>
             ) : (
-              <Text style={{ color: '#C7D2FE', fontSize: 14, lineHeight: 22 }}>{dreamAnalysis}</Text>
+              <Text style={{ color: colors.text, fontSize: 14, lineHeight: 22 }}>{dreamAnalysis}</Text>
             )}
             <Pressable
-              style={{ backgroundColor: '#4338CA', borderRadius: radius.lg, height: 44, alignItems: 'center', justifyContent: 'center', marginTop: space.lg }}
+              style={{ backgroundColor: colors.rose, borderRadius: radius.lg, height: 44, alignItems: 'center', justifyContent: 'center', marginTop: space.lg }}
               onPress={() => setShowAnalysisModal(false)}
             >
               <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700' }}>Close</Text>

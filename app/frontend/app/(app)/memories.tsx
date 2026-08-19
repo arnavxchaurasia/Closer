@@ -78,8 +78,6 @@ function groupByYear(memories: Memory[]) {
 export default function MemoriesScreen() {
   const { colors } = useTheme();
   const { isPaired, isLoading: coupleLoading } = useCouple();
-  if (coupleLoading) return null;
-  if (!isPaired) return <NotConnected message="Memories are shared with your partner. Connect to get started." />;
   const [memories, setMemories] = useState<Memory[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [fTitle, setFTitle] = useState('');
@@ -206,17 +204,27 @@ export default function MemoriesScreen() {
 
   const grouped = useMemo(() => groupByYear(memories), [memories]);
 
+  if (coupleLoading) return null;
+  if (!isPaired) return <NotConnected message="Memories are shared with your partner. Connect to get started." />;
+
   return (
     <SafeAreaView style={s.root} edges={['top']}>
       <FadeSlide delay={0}>
-      <View style={s.header}>
-        <Pressable onPress={() => router.back()} style={{ width: 40, height: 40, justifyContent: 'center' }}>
-          <Ionicons name="arrow-back" size={22} color={colors.text} />
+      <View style={[s.header, { alignItems: 'flex-end' }]}>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 32, fontStyle: 'italic', fontWeight: '700', color: colors.text, letterSpacing: -0.5 }}>
+            Memory Vault
+          </Text>
+          <Text style={{ fontSize: 11, fontWeight: '700', color: colors.muted, letterSpacing: 1.5, textTransform: 'uppercase', marginTop: 2 }}>
+            {tab === 'timeline' ? `${memories.length} SAVED MOMENTS` : `${photos.length} PHOTOS`}
+          </Text>
+        </View>
+        <Pressable
+          style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: colors.surface2, alignItems: 'center', justifyContent: 'center' }}
+          onPress={() => {}}
+        >
+          <Ionicons name="search-outline" size={18} color={colors.text} />
         </Pressable>
-        <Text style={{ fontSize: 20, fontWeight: '700', color: colors.text, flex: 1 }}>Our memories</Text>
-        <Text style={{ fontSize: 13, color: colors.muted }}>
-          {tab === 'timeline' ? `${memories.length} moments` : `${photos.length} photos`}
-        </Text>
       </View>
 
       </FadeSlide>

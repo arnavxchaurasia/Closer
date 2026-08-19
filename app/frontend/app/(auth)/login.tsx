@@ -1,9 +1,11 @@
-import { useSignIn } from '@clerk/clerk-expo';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useSignIn, useOAuth } from '@clerk/clerk-expo';
+import { Ionicons } from '@expo/vector-icons';
+import * as AuthSession from 'expo-auth-session';
 import { router } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import * as WebBrowser from 'expo-web-browser';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  Alert, Animated, Easing, KeyboardAvoidingView, Platform,
+  Alert, Animated, Easing, Image, KeyboardAvoidingView, Platform,
   Pressable, ScrollView, Text, TextInput, View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,6 +15,8 @@ import { useAuth } from '@/src/context/AuthContext';
 import { useTheme } from '@/src/context/ThemeContext';
 import { haptics } from '@/src/haptics';
 import { radius, space } from '@/src/theme';
+
+WebBrowser.maybeCompleteAuthSession();
 
 function FadeSlide({ delay = 0, children }: { delay?: number; children: React.ReactNode }) {
   const a = useRef(new Animated.Value(0)).current;
@@ -27,13 +31,34 @@ export default function LoginScreen() {
   const { colors } = useTheme();
   const { login } = useAuth();
   const { signIn, setActive, isLoaded: signInLoaded } = useSignIn();
+  const { startOAuthFlow } = useOAuth({ strategy: 'oauth_google' });
 
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading]   = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [pwVisible, setPwVisible] = useState(false);
   const [focused, setFocused]   = useState<string | null>(null);
   const pwRef = useRef<TextInput>(null);
+
+  const handleGoogleSignIn = React.useCallback(async () => {
+    setGoogleLoading(true);
+    try {
+      const redirectUrl = AuthSession.makeRedirectUri({ path: 'sso-callback' });
+      const { createdSessionId, setActive: setOAuthActive } = await startOAuthFlow({ redirectUrl });
+      if (createdSessionId && setOAuthActive) {
+        await setOAuthActive({ session: createdSessionId });
+        haptics.success();
+        router.replace('/(app)');
+      }
+    } catch (err: any) {
+      haptics.error();
+      const msg = err?.errors?.[0]?.message ?? err?.message ?? 'Google Sign-In was cancelled or failed.';
+      Alert.alert('Google Sign-In', msg);
+    } finally {
+      setGoogleLoading(false);
+    }
+  }, [startOAuthFlow]);
 
   const submit = async () => {
     if (!email.trim() || !password) { Alert.alert('Fill in all fields'); return; }
@@ -77,27 +102,65 @@ export default function LoginScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView
-          contentContainerStyle={{ padding: space.lg, flexGrow: 1, justifyContent: 'center', paddingTop: 60 }}
+          contentContainerStyle={{ padding: space.lg, flexGrow: 1, justifyContent: 'center', paddingTop: 40, paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           {/* Back */}
           <FadeSlide delay={0}>
-            <Press haptic="light" onPress={() => router.back()} style={{ width: 40, height: 40, justifyContent: 'center', marginBottom: space.xl * 1.5 }}>
+            <Press haptic="light" onPress={() => router.back()} style={{ width: 40, height: 40, justifyContent: 'center', marginBottom: space.lg }}>
               <Text style={{ fontSize: 24, color: colors.text }}>←</Text>
             </Press>
           </FadeSlide>
 
-          {/* Heading */}
+          {/* Heading with Official Logo */}
           <FadeSlide delay={60}>
-            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.rose, letterSpacing: 1.8, textTransform: 'uppercase', marginBottom: 8 }}>Welcome back</Text>
-            <Text style={{ fontSize: 36, fontWeight: '900', color: colors.text, letterSpacing: -1, lineHeight: 42, marginBottom: 8 }}>Sign in</Text>
-            <Text style={{ fontSize: 15, color: colors.muted, marginBottom: space.xl * 1.5, lineHeight: 22 }}>Continue your shared journey.</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+              <Image source={require('@/assets/images/logo.png')} style={{ width: 44, height: 44, borderRadius: 12 }} resizeMode="contain" />
+              <View>
+                <Text style={{ fontSize: 11, fontWeight: '800', color: colors.rose, letterSpacing: 1.8, textTransform: 'uppercase' }}>OurSpace</Text>
+                <Text style={{ fontSize: 26, fontWeight: '900', color: colors.text, letterSpacing: -0.8 }}>Welcome back</Text>
+              </View>
+            </View>
+            <Text style={{ fontSize: 14, color: colors.muted, marginBottom: space.lg, lineHeight: 20 }}>Continue your shared journey.</Text>
+          </FadeSlide>
+
+          {/* Clerk Social Auth Option */}
+          <FadeSlide delay={100}>
+            <Press
+              haptic="medium"
+              onPress={handleGoogleSignIn}
+              disabled={googleLoading || loading}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: colors.surface,
+                borderRadius: radius.lg,
+                height: 54,
+                borderWidth: 1.5,
+                borderColor: colors.line,
+                marginBottom: space.lg,
+                gap: 10,
+                opacity: googleLoading ? 0.7 : 1,
+              }}
+            >
+              <Ionicons name="logo-google" size={20} color="#EA4335" />
+              <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>
+                {googleLoading ? 'Signing in with Google…' : 'Continue with Google'}
+              </Text>
+            </Press>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: space.lg, gap: 12 }}>
+              <View style={{ flex: 1, height: 1, backgroundColor: colors.line }} />
+              <Text style={{ fontSize: 11, fontWeight: '700', color: colors.muted, letterSpacing: 1 }}>OR EMAIL</Text>
+              <View style={{ flex: 1, height: 1, backgroundColor: colors.line }} />
+            </View>
           </FadeSlide>
 
           {/* Fields */}
           <FadeSlide delay={140}>
-            <View style={{ gap: 16, marginBottom: space.xl }}>
+            <View style={{ gap: 16, marginBottom: space.lg }}>
               {/* Email */}
               <View style={{ gap: 8 }}>
                 <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textSec, letterSpacing: 1, textTransform: 'uppercase' }}>Email</Text>
@@ -111,7 +174,7 @@ export default function LoginScreen() {
                 />
               </View>
 
-              {/* Password — eye button absolutely positioned inside */}
+              {/* Password */}
               <View style={{ gap: 8 }}>
                 <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textSec, letterSpacing: 1, textTransform: 'uppercase' }}>Password</Text>
                 <View style={{ position: 'relative' }}>
@@ -129,7 +192,7 @@ export default function LoginScreen() {
                     hitSlop={12}
                     style={{ position: 'absolute', right: 14, top: 0, bottom: 0, justifyContent: 'center' }}
                   >
-                    <Text style={{ fontSize: 20 }}>{pwVisible ? '🙈' : '👁️'}</Text>
+                    <Ionicons name={pwVisible ? 'eye-off-outline' : 'eye-outline'} size={22} color={focused === 'pw' ? colors.rose : colors.muted} />
                   </Pressable>
                 </View>
               </View>
@@ -138,19 +201,15 @@ export default function LoginScreen() {
 
           {/* CTA */}
           <FadeSlide delay={220}>
-            <Press haptic="medium" onPress={submit} disabled={loading}>
-              <LinearGradient
-                colors={['#E8607A', '#C94B9B']}
-                start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-                style={{ borderRadius: radius.xl, height: 60, alignItems: 'center', justifyContent: 'center', opacity: loading ? 0.7 : 1 }}
-              >
+            <Press haptic="medium" onPress={submit} disabled={loading || googleLoading}>
+              <View style={{ borderRadius: radius.xl, height: 58, alignItems: 'center', justifyContent: 'center', opacity: loading ? 0.7 : 1, backgroundColor: colors.rose }}>
                 <Text style={{ color: '#fff', fontSize: 17, fontWeight: '800', letterSpacing: 0.3 }}>
                   {loading ? 'Signing in…' : 'Sign in →'}
                 </Text>
-              </LinearGradient>
+              </View>
             </Press>
 
-            <Text style={{ fontSize: 14, textAlign: 'center', color: colors.textSec, marginTop: space.xl }}>
+            <Text style={{ fontSize: 14, textAlign: 'center', color: colors.textSec, marginTop: space.lg }}>
               New here?{'  '}
               <Text style={{ color: colors.rose, fontWeight: '700' }} onPress={() => router.replace('/(auth)/register')}>
                 Create account

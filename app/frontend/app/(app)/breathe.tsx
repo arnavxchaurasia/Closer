@@ -99,7 +99,7 @@ export default function BreatheScreen() {
   }, []);
 
   if (coupleLoading || !isPaired) return (
-    <View style={{ flex: 1, backgroundColor: '#06040F' }}>
+    <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
         {!coupleLoading && <NotConnected />}
       </SafeAreaView>
@@ -107,7 +107,7 @@ export default function BreatheScreen() {
   );
 
   return (
-    <View style={[s.container, { backgroundColor: '#06040F' }]}>
+    <View style={[s.container, { backgroundColor: colors.bg }]}>
       <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
         <Pressable onPress={() => router.back()} style={s.back} hitSlop={8}>
           <Ionicons name="arrow-back" size={22} color="#fff" />

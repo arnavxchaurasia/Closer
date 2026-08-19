@@ -137,20 +137,20 @@ function AnimatedThemeToggle({ value, onToggle }: { value: boolean; onToggle: ()
     onToggle();
   };
 
-  const thumbX = thumbAnim.interpolate({ inputRange: [0, 1], outputRange: [2, 26] });
+  const thumbX = thumbAnim.interpolate({ inputRange: [0, 1], outputRange: [2, 30] });
 
   return (
-    <Pressable onPress={handlePress} hitSlop={8}>
+    <Pressable onPress={handlePress} accessibilityRole="switch" accessibilityState={{ checked: value }} hitSlop={12} style={{ padding: 4, margin: -4 }}>
       <Animated.View style={[
         {
-          width: 52, height: 28, borderRadius: 14,
+          width: 58, height: 30, borderRadius: 15,
           backgroundColor: value ? colors.rose : colors.surface3,
           justifyContent: 'center',
           transform: [{ scale: scaleAnim }],
         },
       ]}>
         <Animated.View style={{
-          width: 24, height: 24, borderRadius: 12,
+          width: 26, height: 26, borderRadius: 13,
           backgroundColor: '#fff',
           shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 4,
           shadowOffset: { width: 0, height: 2 }, elevation: 3,
@@ -335,6 +335,14 @@ export default function SettingsScreen() {
             <Text style={[s.rowLbl, { flex: 1, marginLeft: space.md }]}>Edit Profile</Text>
             <Ionicons name="chevron-forward" size={16} color={colors.muted} />
           </Pressable>
+          <Pressable
+            style={[s.rowItem, { marginTop: space.xs, borderColor: colors.roseDim }]}
+            onPress={() => router.push('/onboarding' as any)}
+          >
+            <Ionicons name="sparkles-outline" size={20} color={colors.rose} />
+            <Text style={[s.rowLbl, { flex: 1, marginLeft: space.md }]}>View Onboarding Showcase 🚀</Text>
+            <Ionicons name="chevron-forward" size={16} color={colors.muted} />
+          </Pressable>
         </FadeSlide>
 
         {/* Couple */}
@@ -470,7 +478,7 @@ export default function SettingsScreen() {
                 await api.del('/api/push-token').catch(() => {});
                 Alert.alert('Notifications off', 'Re-enable them in Settings → Notifications.');
               }
-            }} trackColor={{ false: colors.surface3, true: colors.rose + 'AA' }} thumbColor={notifsEnabled ? colors.rose : '#aaa'} />
+            }} trackColor={{ false: colors.surface3, true: colors.rose + 'AA' }} thumbColor={notifsEnabled ? colors.rose : colors.muted} />
           </View>
           {notifsEnabled && (
             <View style={{ backgroundColor: colors.surface, borderRadius: 20, borderWidth: 1, borderColor: colors.line, marginBottom: space.sm, overflow: 'hidden' }}>
@@ -492,7 +500,7 @@ export default function SettingsScreen() {
                     value={notifPrefs[item.key]}
                     onValueChange={() => toggleNotifPref(item.key)}
                     trackColor={{ false: colors.surface3, true: colors.rose + 'AA' }}
-                    thumbColor={notifPrefs[item.key] ? colors.rose : '#aaa'}
+                    thumbColor={notifPrefs[item.key] ? colors.rose : colors.muted}
                   />
                 </View>
               ))}
@@ -503,7 +511,7 @@ export default function SettingsScreen() {
               <Text style={s.rowLbl}>Haptic feedback</Text>
               <Text style={{ fontSize: 12, color: colors.muted, marginTop: 2 }}>Vibrations when you tap buttons</Text>
             </View>
-            <Switch value={hapticsOn} onValueChange={toggleHaptics} trackColor={{ false: colors.surface3, true: colors.rose + 'AA' }} thumbColor={hapticsOn ? colors.rose : '#aaa'} />
+            <Switch value={hapticsOn} onValueChange={toggleHaptics} trackColor={{ false: colors.surface3, true: colors.rose + 'AA' }} thumbColor={hapticsOn ? colors.rose : colors.muted} />
           </View>
         </FadeSlide>
 

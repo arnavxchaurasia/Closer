@@ -12,44 +12,44 @@ export const radius = {
   sm: 8, md: 12, lg: 16, xl: 24, full: 999,
 } as const;
 
-// ─── Color Palettes ──────────────────────────────────────────────────────────
+// ─── UXPilot Theme Palettes (Matched to Togetherly / Dashboard Specs) ────────
 export const darkColors = {
-  bg: '#12100E',
-  surface: '#1C1916',
-  surface2: '#251F1C',
-  surface3: '#2E2722',
-  rose: '#D97B66',
-  roseDim: 'rgba(217,123,102,0.15)',
-  gold: '#BFA67E',
+  bg: '#050510',              // Figma: Deep Space Black-Navy
+  surface: '#0F0F22',         // Figma: Dark Navy Card Surface
+  surface2: '#1A1A35',        // Figma: Secondary Card / Input Surface
+  surface3: '#252545',        // Figma: Elevated Container Surface
+  rose: '#F47B6A',            // Figma: Coral-Salmon Primary Accent
+  roseDim: 'rgba(244,123,106,0.15)',
+  gold: '#BFA67E',            // Champagne Gold Accent
   goldDim: 'rgba(191,166,126,0.15)',
-  blue: '#6B9BF5',
-  blueDim: 'rgba(107,155,245,0.15)',
+  blue: '#6B6B9A',            // Muted Indigo
+  blueDim: 'rgba(107,107,154,0.15)',
   green: '#7AB88A',
   greenDim: 'rgba(122,184,138,0.15)',
-  text: '#F5F0EC',
-  textSec: '#C4AFA8',
-  muted: '#7A6A64',
-  line: 'rgba(245,240,236,0.08)',
-  lineStr: 'rgba(245,240,236,0.14)',
-  overlay: 'rgba(18,16,14,0.92)',
+  text: '#F8FAFC',            // High Contrast Off-White
+  textSec: '#9494B8',         // Secondary Text
+  muted: '#6B6B8A',           // Figma: Muted Blue-Gray
+  line: 'rgba(255,255,255,0.07)',
+  lineStr: 'rgba(255,255,255,0.13)',
+  overlay: 'rgba(5,5,16,0.94)',
 };
 
 export const lightColors = {
-  bg: '#F9F7F2',
-  surface: '#FFFFFF',
-  surface2: '#F0EDE8',
+  bg: '#F9F7F2',              // UXPilot Cream Warm Paper
+  surface: '#FFFFFF',         // Pure White Glass Card Surface
+  surface2: '#F0EDE8',        // Soft Warm Secondary Input Surface
   surface3: '#E8E3DC',
-  rose: '#D97B66',
+  rose: '#D97B66',            // UXPilot Terracotta Rose Brand (#D97B66)
   roseDim: 'rgba(217,123,102,0.12)',
-  gold: '#BFA67E',
+  gold: '#BFA67E',            // UXPilot Champagne Gold Accent (#BFA67E)
   goldDim: 'rgba(191,166,126,0.15)',
-  blue: '#4B7BF5',
-  blueDim: 'rgba(75,123,245,0.12)',
+  blue: '#4F46E5',            // Indigo Accent
+  blueDim: 'rgba(79,70,229,0.12)',
   green: '#5A8A6A',
   greenDim: 'rgba(90,138,106,0.12)',
-  text: '#261C1A',
-  textSec: '#6B5C58',
-  muted: '#A89990',
+  text: '#261C1A',            // UXPilot Deep Warm Dark Text (#261C1A)
+  textSec: '#64748B',         // Secondary Text
+  muted: '#94A3B8',           // Muted Metadata Text
   line: 'rgba(38,28,26,0.08)',
   lineStr: 'rgba(38,28,26,0.14)',
   overlay: 'rgba(249,247,242,0.92)',
@@ -57,13 +57,14 @@ export const lightColors = {
 
 export type Colors = typeof darkColors;
 
-// ─── Typography factory (called by ThemeContext) ──────────────────────────────
+// ─── Typography factory (Figma & UXPilot matched metrics) ────────────────────
 export function makeTypography(c: Colors): Record<string, TextStyle> {
   return {
     h1: { fontSize: 30, fontWeight: '700', color: c.text, letterSpacing: -0.5 },
     h2: { fontSize: 24, fontWeight: '700', color: c.text, letterSpacing: -0.3 },
     h3: { fontSize: 20, fontWeight: '600', color: c.text },
     h4: { fontSize: 18, fontWeight: '600', color: c.text },
+    serifTitle: { fontSize: 24, fontWeight: '400', color: c.text, fontStyle: 'italic' },
     body: { fontSize: 15, fontWeight: '400', color: c.text, lineHeight: 22 },
     bodyMd: { fontSize: 14, fontWeight: '400', color: c.textSec, lineHeight: 20 },
     caption: { fontSize: 12, fontWeight: '400', color: c.muted, lineHeight: 16 },

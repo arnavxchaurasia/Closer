@@ -27,6 +27,7 @@ import { haptics } from '@/src/haptics';
 import { useNicknames } from '@/src/hooks/useNicknames';
 import { radius, space } from '@/src/theme';
 import { DateField, TimeField } from '@/src/components/DateTimeField';
+import { getNextFestival } from '@/src/festivals';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -1042,6 +1043,35 @@ export default function ChatScreen() {
         )}
       </View>
 
+      {/* ── Upcoming Festival & Celebration Banner ── */}
+      {(() => {
+        const upcomingFest = getNextFestival(couple?.anniversary);
+        if (upcomingFest && upcomingFest.daysAway >= 0 && upcomingFest.daysAway <= 14) {
+          return (
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.surface, paddingHorizontal: 16, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: colors.line }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
+                <Text style={{ fontSize: 20 }}>{upcomingFest.emoji}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 13, fontWeight: '800', color: colors.text }}>
+                    {upcomingFest.name} {upcomingFest.daysAway === 0 ? 'is Today! 🎉' : `in ${upcomingFest.daysAway} days`}
+                  </Text>
+                  <Text style={{ fontSize: 11, color: colors.muted }} numberOfLines={1}>
+                    {upcomingFest.personalGreeting}
+                  </Text>
+                </View>
+              </View>
+              <Pressable
+                style={{ backgroundColor: '#F97316', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 6 }}
+                onPress={() => router.push('/(app)/calendar' as any)}
+              >
+                <Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>Calendar 📅</Text>
+              </Pressable>
+            </View>
+          );
+        }
+        return null;
+      })()}
+
       {/* ── Offline banner ── */}
       {hasOfflineBanner && (
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: '#92400E', paddingVertical: 6 }}>
@@ -1450,6 +1480,7 @@ export default function ChatScreen() {
               label: 'Delete',
               onPress: async () => {
                 if (!actionTarget) return;
+                haptics.delete();
                 setActionTarget(null);
                 await api.del(`/api/messages/${actionTarget.id}`).catch(() => {});
                 setMessages(prev => prev.filter(m => m.id !== actionTarget.id));

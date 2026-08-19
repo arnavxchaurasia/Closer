@@ -78,7 +78,7 @@ function makeStyles(c: Colors) {
     empty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: space.md },
     emptyEmoji: { fontSize: 64 },
     emptyText: { fontSize: 16, color: c.textSec, textAlign: 'center', maxWidth: 240, lineHeight: 22 },
-    overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
+    overlay: { flex: 1, backgroundColor: c.overlay, justifyContent: 'flex-end' },
     sheet: { backgroundColor: c.surface, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, padding: space.lg, gap: space.md },
     sheetTitle: { fontSize: 18, fontWeight: '700', color: c.text, marginBottom: space.sm },
     inputLabel: { fontSize: 11, fontWeight: '700', color: c.textSec, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 4 },

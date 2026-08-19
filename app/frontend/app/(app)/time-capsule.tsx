@@ -155,7 +155,7 @@ export default function TimeCapsuleScreen() {
                 No capsules yet
               </Text>
               <Text style={{ fontSize: 14, color: colors.muted, textAlign: 'center', lineHeight: 20 }}>
-                Write something to your future selves.{'\n'}It'll be waiting.
+                Write something to your future selves.{'\n'}It&apos;ll be waiting.
               </Text>
             </View>
           ) : null
@@ -230,7 +230,7 @@ export default function TimeCapsuleScreen() {
                     )}
                     {item.message ? (
                       <Text style={[s.messageText, { color: colors.text }]}>
-                        "{item.message}"
+                        &quot;{item.message}&quot;
                       </Text>
                     ) : null}
                     <Text style={{ fontSize: 11, color: colors.muted, marginTop: space.sm, textAlign: 'right' }}>

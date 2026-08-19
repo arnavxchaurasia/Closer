@@ -68,8 +68,6 @@ export default function TodoScreen() {
   const { user } = useAuth();
   const { isPaired, isLoading: coupleLoading } = useCouple();
   const s = useMemo(() => makeStyles(colors), [colors]);
-  if (coupleLoading) return null;
-  if (!isPaired) return <NotConnected message="Shared lists need a partner. Connect to get started." />;
 
   const [listType, setListType] = useState<ListType>('todo');
   const [items, setItems] = useState<TodoItem[]>([]);
@@ -148,6 +146,9 @@ export default function TodoScreen() {
   );
 
   const emptyEmoji = listType === 'todo' ? '✅' : '🛒';
+
+  if (coupleLoading) return null;
+  if (!isPaired) return <NotConnected message="Shared lists need a partner. Connect to get started." />;
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'bottom']}>

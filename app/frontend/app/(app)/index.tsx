@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { api } from '@/src/api';
 import { Press } from '@/src/components/Press';
-import { Toast, useToast } from '@/src/components/Toast';
+import { sonner } from '@/src/components/Sonner';
 import { HamburgerButton } from '@/src/components/Drawer';
 import { useAuth } from '@/src/context/AuthContext';
 import { useCouple } from '@/src/context/CoupleContext';
@@ -20,7 +20,7 @@ import { haptics } from '@/src/haptics';
 import { useNicknames } from '@/src/hooks/useNicknames';
 import { canSendNudge, recordNudgeSent, getNudgeStatus } from '@/src/notificationRules';
 import { LOVE_QUOTES } from '@/src/quotes';
-import { getNextFestival } from '@/src/festivals';
+import { FESTIVALS, Festival, getNextFestival } from '@/src/festivals';
 import { Colors, TAB_BAR_HEIGHT, radius, space } from '@/src/theme';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -190,6 +190,45 @@ function Eyebrow({ children, color }: { children: string; color?: string }) {
   );
 }
 
+function RhythmCard({ streak, todayMood, partnerMood, onPress }: {
+  streak: number | null; todayMood: number | null; partnerMood: number | null; onPress: () => void;
+}) {
+  const { colors } = useTheme();
+  const myMood = todayMood ?? 3;
+  const theirMood = partnerMood ?? 3;
+  const connection = Math.round(((myMood + theirMood) / 10) * 100);
+  const bars = [44, 56, 48, 68, 62, 76, 88];
+
+  return (
+    <Press haptic="light" onPress={onPress}>
+      <View style={{ backgroundColor: colors.surface, borderRadius: 32, padding: 24, borderWidth: 1, borderColor: colors.line, overflow: 'hidden' }}>
+        <View style={{ position: 'absolute', width: 150, height: 150, borderRadius: 75, backgroundColor: colors.roseDim, right: -46, top: -64 }} />
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+          <View>
+            <Text style={{ fontSize: 26, fontWeight: '300', fontStyle: 'italic', color: colors.text }}>Our Rhythm</Text>
+            <Text style={{ fontSize: 9, fontWeight: '700', letterSpacing: 1.5, color: colors.muted, marginTop: 4 }}>IN SYNC THIS WEEK</Text>
+          </View>
+          <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.rose + '44', backgroundColor: colors.roseDim }}>
+            <Ionicons name="pulse-outline" size={19} color={colors.rose} />
+          </View>
+        </View>
+        <View style={{ height: 118, flexDirection: 'row', alignItems: 'flex-end', gap: 9, marginTop: 16, paddingHorizontal: 2 }}>
+          {bars.map((height, index) => (
+            <View key={index} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', gap: 7 }}>
+              <View style={{ width: '100%', maxWidth: 22, height: `${height}%` as any, borderRadius: 12, backgroundColor: index === bars.length - 1 ? colors.rose : colors.rose + '55' }} />
+              <Text style={{ fontSize: 9, color: colors.muted }}>{['M', 'T', 'W', 'T', 'F', 'S', 'S'][index]}</Text>
+            </View>
+          ))}
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15, paddingTop: 14, borderTopWidth: 1, borderTopColor: colors.line }}>
+          <Text style={{ fontSize: 12, color: colors.textSec }}>{connection}% connected today</Text>
+          <Text style={{ fontSize: 12, color: colors.rose, fontWeight: '700' }}>{streak ?? 0} day streak</Text>
+        </View>
+      </View>
+    </Press>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function HomeScreen() {
   const { colors, isDark } = useTheme();
@@ -221,17 +260,38 @@ export default function HomeScreen() {
   const [savings, setSavings] = useState<{ current: number; goal: number } | null>(null);
   const [openTasks, setOpenTasks] = useState<{ id: string; title: string; done?: boolean }[]>([]);
 
+  // AI Indian Festival Guide state
+  const [indianGuide, setIndianGuide] = useState<any>(null);
+  const [showFestGuideModal, setShowFestGuideModal] = useState(false);
+  const [addingFestToCal, setAddingFestToCal] = useState(false);
+
+  const [currentVibe, setCurrentVibe] = useState('✨ Cozy');
+  const updateVibePill = async (vibeLabel: string, emoji: string) => {
+    setCurrentVibe(vibeLabel);
+    haptics.pop();
+    sonner.show(`Vibe updated to ${vibeLabel}!`, 'Shared with your partner.');
+    try {
+      await api.post('/api/ai/vibe-check', { vibe: vibeLabel, emoji });
+    } catch {}
+  };
+
   const [sendingThinking, setSendingThinking] = useState(false);
   const sendThinkingOfYou = async () => {
+    if (!isPaired) {
+      haptics.select();
+      sonner.show('Connect with Partner 💕', 'Pair your accounts first to send love thinking of you!');
+      router.push('/(auth)/pair' as any);
+      return;
+    }
     setSendingThinking(true);
-    haptics.medium();
+    haptics.heartbeat();
     try {
       await api.post('/api/messages', { content: '💭 thinking of you', msg_type: 'text' });
       haptics.success();
-      Alert.alert('Sent!', `Sent "💭 thinking of you" to ${partnerName}.`);
+      sonner.show('Sent! 💭', `Sent "thinking of you" to ${partnerName}.`);
     } catch {
       haptics.error();
-      Alert.alert('Error', 'Could not send message.');
+      sonner.show('Could not send', 'Please check connection.', 'error');
     } finally {
       setSendingThinking(false);
     }
@@ -260,7 +320,7 @@ export default function HomeScreen() {
   const heartY   = useRef(new Animated.Value(0)).current;
   const heartOpacity = useRef(new Animated.Value(0)).current;
 
-  const { toast, show: showToast, hide: hideToast } = useToast();
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => sonner.show(message, undefined, type);
 
   const heroGrad: [string, string] = ['#9F1239', '#E8607A'];
 
@@ -438,11 +498,41 @@ export default function HomeScreen() {
       api.get<{ current: number; goal: number }>('/api/savings/summary')
         .then(s => setSavings(s))
         .catch(() => {});
+
+      // Fetch AI Indian Festival Guide
+      api.get('/api/ai/indian-festivals-guide')
+        .then(g => setIndianGuide(g))
+        .catch(() => {});
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
   }, []);
+
+  const addFestivalToCalendar = async (festName: string, festDate: string, emoji: string) => {
+    if (addingFestToCal) return;
+    setAddingFestToCal(true);
+    haptics.celebrate();
+    try {
+      await api.post('/api/events', {
+        title: `${emoji} ${festName}`,
+        category: 'festival',
+        start_dt: `${festDate}T00:00:00Z`,
+        end_dt: `${festDate}T23:59:00Z`,
+        all_day: true,
+        description: `Celebrate ${festName} together! 🎉`,
+        color: '#F97316',
+        visibility: 'partner',
+      });
+      haptics.success();
+      showToast(`Added ${festName} to Calendar! 📅`, 'success');
+    } catch {
+      haptics.error();
+      showToast('Could not add to calendar', 'error');
+    } finally {
+      setAddingFestToCal(false);
+    }
+  };
 
   const refreshNudge = useCallback(async () => {
     const { allowed, remainingToday } = await canSendNudge();
@@ -610,8 +700,6 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top']}>
-      <Toast {...toast} onHide={hideToast} />
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={colors.rose} />}
@@ -619,7 +707,7 @@ export default function HomeScreen() {
       >
         {/* ── [1] HEADER ── */}
         <FadeSlide delay={0}>
-          <View style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 28, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             {/* Partner avatar + info */}
             {isPaired && partner ? (
               <Pressable onPress={() => router.push('/(app)/chat')} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -638,8 +726,8 @@ export default function HomeScreen() {
                 </View>
                 <View>
                   <Text style={{ fontSize: 22, fontWeight: '300', fontStyle: 'italic', color: colors.text, letterSpacing: -0.3 }}>{partnerName}</Text>
-                  <Text style={{ fontSize: 10, fontWeight: '600', letterSpacing: 0.5, color: isPartnerOnline ? '#5A8A6A' : colors.muted, marginTop: 2 }}>
-                    {isPartnerOnline ? '● online now' : partnerOnlineTime ? `active ${daysAgo(partnerOnlineTime)}` : greeting}
+                  <Text style={{ fontSize: 9, fontWeight: '700', letterSpacing: 1.3, color: isPartnerOnline ? '#5A8A6A' : colors.muted, marginTop: 3, textTransform: 'uppercase' }}>
+                    {isPartnerOnline ? 'Online now' : partnerOnlineTime ? `Active ${daysAgo(partnerOnlineTime)}` : greeting}
                   </Text>
                 </View>
               </Pressable>
@@ -663,7 +751,7 @@ export default function HomeScreen() {
                 hitSlop={8}
                
               >
-                <Ionicons name="notifications-outline" size={18} color={colors.textSec} />
+                <Ionicons name="heart-outline" size={19} color={colors.textSec} />
               </Pressable>
               <HamburgerButton />
             </View>
@@ -673,14 +761,15 @@ export default function HomeScreen() {
         {/* ── [2] HERO — editorial countdown number ── */}
         {isPaired && (
           <FadeSlide delay={60}>
-            <View style={{ paddingHorizontal: 24, marginBottom: 24 }}>
+            <View style={{ paddingHorizontal: 24, marginBottom: 30, alignItems: 'center' }}>
               {loading ? (
                 <Skel w="60%" h={120} r={8} />
               ) : heroStat ? (
-                <View style={{ position: 'relative' }}>
+                <View style={{ position: 'relative', width: '100%', alignItems: 'center', paddingTop: 14, paddingBottom: 2 }}>
+                  <View style={{ position: 'absolute', top: -34, width: 250, height: 250, borderRadius: 125, backgroundColor: colors.roseDim, opacity: 0.55 }} />
                   <Eyebrow>{heroStat.eyebrow}</Eyebrow>
                   <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                    <Text style={{ fontSize: 110, fontWeight: '200', fontStyle: 'italic', color: colors.text, lineHeight: 110 }}>
+                    <Text style={{ fontSize: 118, fontWeight: '200', fontStyle: 'italic', color: colors.text, lineHeight: 118 }}>
                       {heroStat.number}
                     </Text>
                     <Text style={{ fontSize: 26, fontWeight: '300', fontStyle: 'italic', color: colors.rose, marginBottom: 14, marginLeft: 6 }}>
@@ -688,7 +777,7 @@ export default function HomeScreen() {
                     </Text>
                   </View>
                   {heroStat.sub ? (
-                    <Text style={{ fontSize: 13, color: colors.muted, fontStyle: 'italic', marginTop: -4 }}>{heroStat.sub}</Text>
+                    <Text style={{ fontSize: 12, color: colors.muted, fontStyle: 'italic', marginTop: -4 }}>{heroStat.sub}</Text>
                   ) : null}
                 </View>
               ) : null}
@@ -696,34 +785,70 @@ export default function HomeScreen() {
           </FadeSlide>
         )}
 
-        {/* Not paired — invite card */}
+        {/* Not paired — Figma Slate Navy invite card */}
         {!isPaired && (
           <FadeSlide delay={60}>
-            <Press haptic="light" onPress={() => router.push('/(auth)/pair')} style={{ marginHorizontal: 24, marginBottom: 24 }}>
-              <View style={{
-                borderRadius: 32,
-                backgroundColor: colors.surface,
-                borderWidth: 1, borderColor: colors.roseDim,
-                padding: 24,
-                flexDirection: 'row', alignItems: 'center', gap: 16,
-              }}>
-                <Text style={{ fontSize: 36 }}>💑</Text>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text }}>Connect your partner</Text>
-                  <Text style={{ fontSize: 13, color: colors.muted, marginTop: 3 }}>Create your shared space.</Text>
+            <View style={{ marginHorizontal: 24, marginBottom: 24 }}>
+              <LinearGradient
+                colors={[colors.surface, colors.surface2]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{
+                  borderRadius: 28,
+                  padding: 24,
+                  borderWidth: 1,
+                  borderColor: colors.roseDim,
+                  shadowColor: '#000',
+                  shadowOpacity: 0.25,
+                  shadowRadius: 16,
+                  shadowOffset: { width: 0, height: 6 },
+                  elevation: 6,
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+                  <View style={{
+                    width: 52, height: 52, borderRadius: 26,
+                    backgroundColor: colors.roseDim,
+                    alignItems: 'center', justifyContent: 'center',
+                    borderWidth: 1, borderColor: colors.rose,
+                  }}>
+                    <Text style={{ fontSize: 26 }}>💑</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>Connect with Partner</Text>
+                    <Text style={{ fontSize: 12, color: colors.textSec, marginTop: 3, lineHeight: 18 }}>
+                      Create your private space for live presence, shared rhythms & memories.
+                    </Text>
+                  </View>
                 </View>
-                <Text style={{ color: colors.rose, fontSize: 20 }}>→</Text>
-              </View>
-            </Press>
+
+                <LinearGradient
+                  colors={[colors.rose, colors.rose]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={{ borderRadius: 16, overflow: 'hidden' }}
+                >
+                  <Press
+                    haptic="medium"
+                    onPress={() => router.push('/(auth)/pair')}
+                    style={{ paddingVertical: 14, alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15, letterSpacing: 0.3 }}>
+                      Connect with Partner ✨
+                    </Text>
+                  </Press>
+                </LinearGradient>
+              </LinearGradient>
+            </View>
           </FadeSlide>
         )}
 
-        {/* ── [3] FLOATING PILLS — mood + next event ── */}
+        {/* ── [3] CONNECTION CONTEXT ── */}
         {isPaired && (
           <FadeSlide delay={120}>
             <View style={{ paddingHorizontal: 24, flexDirection: 'row', gap: 10, marginBottom: 28 }}>
               <FloatingPill offsetDelay={0}>
-                <Text style={{ fontSize: 9, fontWeight: '700', letterSpacing: 2, textTransform: 'uppercase', color: colors.muted, opacity: 0.8 }}>Moods</Text>
+                <Text style={{ fontSize: 9, fontWeight: '700', letterSpacing: 2, textTransform: 'uppercase', color: colors.muted, opacity: 0.8 }}>Together today</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 }}>
                   <View style={{ alignItems: 'center' }}>
                     <Text style={{ fontSize: 18 }}>{todayMood !== null ? MOOD_EMOJIS[todayMood - 1] : '🙂'}</Text>
@@ -737,7 +862,7 @@ export default function HomeScreen() {
                 </View>
               </FloatingPill>
               <FloatingPill offsetDelay={2500}>
-                <Text style={{ fontSize: 9, fontWeight: '700', letterSpacing: 2, textTransform: 'uppercase', color: colors.muted, opacity: 0.8 }}>Next</Text>
+                <Text style={{ fontSize: 9, fontWeight: '700', letterSpacing: 2, textTransform: 'uppercase', color: colors.muted, opacity: 0.8 }}>Next moment</Text>
                 <Text style={{ fontSize: 13, fontWeight: '500', color: colors.text, marginTop: 2 }} numberOfLines={1}>
                   {nextEvt ? nextEvt.title.slice(0, 20) : 'No events'}
                 </Text>
@@ -747,6 +872,84 @@ export default function HomeScreen() {
                   </Text>
                 )}
               </FloatingPill>
+            </View>
+          </FadeSlide>
+        )}
+
+        {/* ── [3.2] 1-TAP AI EXPRESSIVE VIBE CHECK BAR ── */}
+        {isPaired && (
+          <FadeSlide delay={130}>
+            <View style={{ paddingHorizontal: 24, marginBottom: 20 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <Text style={{ fontSize: 10, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase', color: colors.muted }}>
+                  TODAY'S VIBE · {currentVibe}
+                </Text>
+                <Text style={{ fontSize: 10, fontWeight: '700', color: colors.rose }}>AI Auto-Inferred ✨</Text>
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+                {[
+                  { vibe: '🥰 Loving', emoji: '🥰' },
+                  { vibe: '✨ Cozy', emoji: '✨' },
+                  { vibe: '☕ Busy', emoji: '☕' },
+                  { vibe: '😴 Tired', emoji: '😴' },
+                  { vibe: '🥳 Excited', emoji: '🥳' },
+                  { vibe: '🧘 Calm', emoji: '🧘' },
+                ].map((v, i) => (
+                  <Pressable
+                    key={i}
+                    onPress={() => updateVibePill(v.vibe, v.emoji)}
+                    style={{
+                      backgroundColor: currentVibe === v.vibe ? colors.roseDim : colors.surface,
+                      borderRadius: 16,
+                      paddingHorizontal: 12,
+                      paddingVertical: 8,
+                      borderWidth: 1,
+                      borderColor: currentVibe === v.vibe ? colors.rose : colors.line,
+                    }}
+                  >
+                    <Text style={{ fontSize: 12, fontWeight: '700', color: currentVibe === v.vibe ? colors.rose : colors.text }}>{v.vibe}</Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
+            </View>
+          </FadeSlide>
+        )}
+
+        {/* ── [3.5] AI QUICK ACTION PILL BAR ── */}
+        {isPaired && (
+          <FadeSlide delay={140}>
+            <View style={{ paddingHorizontal: 24, marginBottom: 24 }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+                {[
+                  { label: 'Surprise Date Idea 💘', route: '/(app)/date-ideas' },
+                  { label: 'AI Indian Festival Guide 🪔', onPress: () => setShowFestGuideModal(true) },
+                  { label: 'Ask Aria Coach ✨', route: '/(app)/aria' },
+                  { label: 'Couple Quiz & Trivia 🎲', route: '/(app)/couple-quiz' },
+                  { label: 'Send Thinking of You 💭', onPress: sendThinkingOfYou },
+                ].map((item, i) => (
+                  <Pressable
+                    key={i}
+                    style={{
+                      backgroundColor: colors.surface,
+                      borderRadius: 20,
+                      paddingHorizontal: 14,
+                      paddingVertical: 10,
+                      borderWidth: 1,
+                      borderColor: colors.line,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 6,
+                    }}
+                    onPress={() => {
+                      haptics.light();
+                      if (item.onPress) item.onPress();
+                      else if (item.route) router.push(item.route as any);
+                    }}
+                  >
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: colors.text }}>{item.label}</Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
             </View>
           </FadeSlide>
         )}
@@ -831,6 +1034,133 @@ export default function HomeScreen() {
         {/* ── [5] STAT STRIP — savings + streak ── */}
         {isPaired && (
           <FadeSlide delay={200}>
+            <View style={{ paddingHorizontal: 24, marginBottom: 28 }}>
+              <RhythmCard
+                streak={streak}
+                todayMood={todayMood}
+                partnerMood={partnerMood}
+                onPress={() => router.push('/(app)/connect' as any)}
+              />
+            </View>
+          </FadeSlide>
+        )}
+
+        {/* ── [5.5] AI INDIAN FESTIVAL & CELEBRATION GUIDE ── */}
+        <FadeSlide delay={210}>
+          <View style={{ marginHorizontal: 24, marginBottom: 24 }}>
+            <View style={{
+              borderRadius: 32,
+              backgroundColor: colors.surface,
+              borderWidth: 1,
+              borderColor: '#F9731644',
+              padding: 22,
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <View style={{ position: 'absolute', top: -30, right: -30, width: 120, height: 120, borderRadius: 60, backgroundColor: 'rgba(249,115,22,0.1)' }} />
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={{ fontSize: 18 }}>🪔</Text>
+                  <Text style={{ fontSize: 11, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase', color: '#F97316' }}>AI Indian Festival Guide</Text>
+                </View>
+                <Pressable onPress={() => setShowFestGuideModal(true)} hitSlop={8}>
+                  <Text style={{ fontSize: 12, fontWeight: '700', color: colors.rose }}>Explore All →</Text>
+                </Pressable>
+              </View>
+
+              {indianGuide?.featured_festival ? (
+                <View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                    <Text style={{ fontSize: 32 }}>{indianGuide.featured_festival.emoji ?? '🪔'}</Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>
+                        {indianGuide.featured_festival.name}
+                      </Text>
+                      <Text style={{ fontSize: 12, color: colors.muted, fontWeight: '600' }}>
+                        {indianGuide.featured_festival.days_away === 0 ? 'Today! 🎉' : `In ${indianGuide.featured_festival.days_away} days (${indianGuide.featured_festival.date})`}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <Text style={{ fontSize: 13, color: colors.textSec, lineHeight: 20, marginBottom: 12 }}>
+                    {indianGuide.featured_festival.description}
+                  </Text>
+
+                  {/* AI Outfit & Date Box */}
+                  <View style={{ backgroundColor: colors.surface2, borderRadius: 16, padding: 12, gap: 6, marginBottom: 14, borderWidth: 1, borderColor: colors.line }}>
+                    {indianGuide.featured_festival.outfit_suggestion ? (
+                      <Text style={{ fontSize: 12, color: colors.text }}>
+                        👗 <Text style={{ fontWeight: '700' }}>Outfit Suggestion:</Text> {indianGuide.featured_festival.outfit_suggestion}
+                      </Text>
+                    ) : null}
+                    {indianGuide.featured_festival.date_idea ? (
+                      <Text style={{ fontSize: 12, color: colors.text }}>
+                        💕 <Text style={{ fontWeight: '700' }}>Couple Date Idea:</Text> {indianGuide.featured_festival.date_idea}
+                      </Text>
+                    ) : null}
+                  </View>
+
+                  {/* Quick Actions */}
+                  <View style={{ flexDirection: 'row', gap: 10 }}>
+                    <Pressable
+                      style={{
+                        flex: 1,
+                        backgroundColor: '#F97316',
+                        borderRadius: 16,
+                        paddingVertical: 12,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'row',
+                        gap: 6,
+                        opacity: addingFestToCal ? 0.6 : 1,
+                      }}
+                      onPress={() => addFestivalToCalendar(indianGuide.featured_festival.name, indianGuide.featured_festival.date, indianGuide.featured_festival.emoji ?? '🪔')}
+                      disabled={addingFestToCal}
+                    >
+                      <Ionicons name="calendar-outline" size={16} color="#fff" />
+                      <Text style={{ color: '#fff', fontSize: 13, fontWeight: '800' }}>Add to Calendar</Text>
+                    </Pressable>
+
+                    <Pressable
+                      style={{
+                        backgroundColor: colors.surface2,
+                        borderRadius: 16,
+                        paddingHorizontal: 14,
+                        paddingVertical: 12,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 1,
+                        borderColor: colors.line,
+                      }}
+                      onPress={() => router.push('/(app)/aria' as any)}
+                    >
+                      <Text style={{ fontSize: 13, fontWeight: '700', color: colors.text }}>Ask AI ✨</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              ) : festival ? (
+                <View>
+                  <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>{festival.emoji} {festival.name}</Text>
+                  <Text style={{ fontSize: 13, color: colors.textSec, marginTop: 4 }}>{festival.personalGreeting}</Text>
+                  <Pressable
+                    style={{ marginTop: 12, backgroundColor: '#F97316', borderRadius: 14, paddingVertical: 10, alignItems: 'center' }}
+                    onPress={() => addFestivalToCalendar(festival.name, festival.date, festival.emoji)}
+                  >
+                    <Text style={{ color: '#fff', fontWeight: '800', fontSize: 13 }}>Add {festival.name} to Calendar 📅</Text>
+                  </Pressable>
+                </View>
+              ) : (
+                <View>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>Explore Upcoming Indian Festivals</Text>
+                  <Text style={{ fontSize: 12, color: colors.muted, marginTop: 2 }}>Teej, Karwa Chauth, Diwali, Shivratri & more.</Text>
+                </View>
+              )}
+            </View>
+          </View>
+        </FadeSlide>
+
+        {isPaired && (
+          <FadeSlide delay={220}>
             <View style={{ marginHorizontal: 24, marginBottom: 24, flexDirection: 'row', gap: 0 }}>
               {/* Travel fund */}
               <View style={{ flex: 1, paddingRight: 20 }}>
@@ -865,7 +1195,7 @@ export default function HomeScreen() {
 
         {/* ── [5b] QUICK ACTION ROW — Vibe, Chat, Date Idea ── */}
         {isPaired && (
-          <FadeSlide delay={210}>
+          <FadeSlide delay={240}>
             <View style={{ paddingHorizontal: 24, marginBottom: 24, flexDirection: 'row', gap: 10 }}>
               <Press haptic="medium" style={{ flex: 1 }} onPress={sendThinkingOfYou}>
                 <View style={{
@@ -902,7 +1232,7 @@ export default function HomeScreen() {
         )}
 
         {/* ── [6] QUICK ACTIONS ── */}
-        <FadeSlide delay={220}>
+        <FadeSlide delay={260}>
           <View style={{ marginBottom: 24 }}>
             <View style={{ paddingHorizontal: 24, marginBottom: 12 }}>
               <Eyebrow>Quick Access</Eyebrow>
@@ -926,7 +1256,7 @@ export default function HomeScreen() {
         </FadeSlide>
 
         {/* ── Mood check-in (subtle) ── */}
-        <FadeSlide delay={240}>
+        <FadeSlide delay={280}>
           <View style={{ paddingHorizontal: 24, marginBottom: 24 }}>
             <Eyebrow>How are you feeling?</Eyebrow>
             <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
@@ -959,7 +1289,7 @@ export default function HomeScreen() {
 
         {/* ── [7] PARTNER ACTIVITY ── */}
         {partnerActivity.length > 0 && (
-          <FadeSlide delay={260}>
+          <FadeSlide delay={300}>
             <View style={{ paddingHorizontal: 24, marginBottom: 24 }}>
               {partnerActivity.slice(0, 2).map((act, i) => (
                 <Text key={i} style={{ fontSize: 13, fontStyle: 'italic', color: colors.muted, lineHeight: 20, marginBottom: 2 }}>
@@ -973,7 +1303,7 @@ export default function HomeScreen() {
 
         {/* ── Context / occasion banner ── */}
         {contextBanner && (
-          <FadeSlide delay={270}>
+          <FadeSlide delay={320}>
             <View style={{
               marginHorizontal: 24, marginBottom: 20,
               borderRadius: 20, padding: 16,
@@ -988,7 +1318,7 @@ export default function HomeScreen() {
 
         {/* ── [8] UPCOMING EVENT ── */}
         {todayEvts.length > 0 && (
-          <FadeSlide delay={280}>
+          <FadeSlide delay={340}>
             <View style={{ paddingHorizontal: 24, marginBottom: 24 }}>
               <Eyebrow>Today</Eyebrow>
               {todayEvts.map(evt => {
@@ -1022,7 +1352,7 @@ export default function HomeScreen() {
 
         {/* ── Open assigned tasks ── */}
         {openTasks.length > 0 && (
-          <FadeSlide delay={285}>
+          <FadeSlide delay={360}>
             <View style={{ paddingHorizontal: 24, marginBottom: 24 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                 <Eyebrow>Your Tasks</Eyebrow>
@@ -1048,42 +1378,48 @@ export default function HomeScreen() {
         )}
 
         {/* ── [9] SHARED JOURNEYS — journal + memories ── */}
-        <FadeSlide delay={300}>
-          <View style={{ paddingHorizontal: 24, marginBottom: 24, flexDirection: 'row', gap: 12 }}>
+        <FadeSlide delay={380}>
+          <View style={{ paddingHorizontal: 24, marginBottom: 28 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 13 }}>
+              <Text style={{ fontSize: 25, fontWeight: '300', fontStyle: 'italic', color: colors.text }}>Shared Journeys</Text>
+              <Press haptic="light" onPress={() => router.push('/(app)/memories')}><Text style={{ fontSize: 10, fontWeight: '800', letterSpacing: 1, color: colors.rose }}>EXPLORE ALL</Text></Press>
+            </View>
             {/* Journal card */}
-            <Press haptic="light" onPress={() => router.push('/(app)/our-journal' as any)} style={{ flex: 1 }}>
+            <Press haptic="light" onPress={() => router.push('/(app)/our-journal' as any)} style={{ marginBottom: 14 }}>
               <View style={{
-                height: 160, borderRadius: 28,
-                backgroundColor: colors.surface2,
+                height: 178, borderRadius: 30,
+                backgroundColor: '#3A2922',
                 borderWidth: 1, borderColor: colors.line,
-                justifyContent: 'flex-end', padding: 20,
+                justifyContent: 'flex-end', padding: 22,
                 overflow: 'hidden',
               }}>
                 <LinearGradient
-                  colors={[colors.surface2, colors.surface3]}
+                  colors={['rgba(38,28,26,0.15)', 'rgba(38,28,26,0.94)']}
                   style={StyleSheet.absoluteFill}
                 />
-                <Eyebrow>Journal</Eyebrow>
-                <Text style={{ fontSize: 16, fontWeight: '300', fontStyle: 'italic', color: colors.text }}>Our Journal</Text>
-                <Text style={{ fontSize: 11, color: colors.muted, marginTop: 3 }}>Write together</Text>
+                <Text style={{ fontSize: 9, fontWeight: '800', letterSpacing: 2, color: 'rgba(255,255,255,0.7)' }}>SHARED JOURNAL</Text>
+                <Text style={{ fontSize: 25, fontWeight: '300', fontStyle: 'italic', color: '#fff', marginTop: 8 }}>Morning Pages</Text>
+                <Text style={{ fontSize: 11, color: 'rgba(255,255,255,0.62)', marginTop: 4 }}>A place for the small things</Text>
+                <View style={{ position: 'absolute', top: 18, right: 18, width: 42, height: 42, borderRadius: 21, borderWidth: 1, borderColor: 'rgba(255,255,255,0.35)', alignItems: 'center', justifyContent: 'center' }}><Ionicons name="add" size={22} color="#fff" /></View>
               </View>
             </Press>
             {/* Memories card */}
-            <Press haptic="light" onPress={() => router.push('/(app)/memories')} style={{ flex: 1 }}>
+            <Press haptic="light" onPress={() => router.push('/(app)/memories')}>
               <View style={{
-                height: 160, borderRadius: 28,
-                backgroundColor: colors.surface3,
+                height: 178, borderRadius: 30,
+                backgroundColor: '#372639',
                 borderWidth: 1, borderColor: colors.line,
-                justifyContent: 'flex-end', padding: 20,
+                justifyContent: 'flex-end', padding: 22,
                 overflow: 'hidden',
               }}>
                 <LinearGradient
-                  colors={[colors.surface3, colors.surface2]}
+                  colors={['rgba(44,29,55,0.18)', 'rgba(30,18,29,0.94)']}
                   style={StyleSheet.absoluteFill}
                 />
-                <Eyebrow>Memories</Eyebrow>
-                <Text style={{ fontSize: 16, fontWeight: '300', fontStyle: 'italic', color: colors.text }}>Memories</Text>
-                <Text style={{ fontSize: 11, color: colors.muted, marginTop: 3 }}>Add a moment</Text>
+                <Text style={{ fontSize: 9, fontWeight: '800', letterSpacing: 2, color: 'rgba(255,255,255,0.7)' }}>MEMORY LANE</Text>
+                <Text style={{ fontSize: 25, fontWeight: '300', fontStyle: 'italic', color: '#fff', marginTop: 8 }}>Little Moments</Text>
+                <Text style={{ fontSize: 11, color: 'rgba(255,255,255,0.62)', marginTop: 4 }}>Collect the days you want to keep</Text>
+                <View style={{ position: 'absolute', top: 18, right: 18, width: 42, height: 42, borderRadius: 21, borderWidth: 1, borderColor: 'rgba(255,255,255,0.35)', alignItems: 'center', justifyContent: 'center' }}><Ionicons name="images-outline" size={19} color="#fff" /></View>
               </View>
             </Press>
           </View>
@@ -1187,10 +1523,93 @@ export default function HomeScreen() {
               onPress={saveNote} disabled={savingNote || !noteText.trim()}
              
             >
-              <Text style={{ color: colors.bg, fontSize: 15, fontWeight: '600' }}>{savingNote ? 'Saving…' : 'Save note'}</Text>
             </Pressable>
           </Pressable>
         </Pressable>
+      </Modal>
+
+      {/* ── AI Indian Festival Guide Modal ── */}
+      <Modal visible={showFestGuideModal} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setShowFestGuideModal(false)}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 24, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: colors.line }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 20, fontWeight: '900', color: colors.text }}>🪔 AI Indian Festival Guide</Text>
+              <Text style={{ fontSize: 12, color: colors.muted, marginTop: 2 }}>Self-sustaining, auto-updated cultural assistant</Text>
+            </View>
+            <Pressable onPress={() => setShowFestGuideModal(false)} hitSlop={12}>
+              <Ionicons name="close" size={24} color={colors.muted} />
+            </Pressable>
+          </View>
+
+          <ScrollView contentContainerStyle={{ padding: 24, gap: 16 }} showsVerticalScrollIndicator={false}>
+            {indianGuide?.featured_festival && (
+              <View style={{ backgroundColor: colors.surface, borderRadius: 24, padding: 20, borderWidth: 1.5, borderColor: '#F97316' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                  <Text style={{ fontSize: 36 }}>{indianGuide.featured_festival.emoji ?? '🪔'}</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 20, fontWeight: '900', color: colors.text }}>{indianGuide.featured_festival.name}</Text>
+                    <Text style={{ fontSize: 13, color: '#F97316', fontWeight: '700', marginTop: 2 }}>
+                      {indianGuide.featured_festival.days_away === 0 ? 'Today!' : `${indianGuide.featured_festival.days_away} days away (${indianGuide.featured_festival.date})`}
+                    </Text>
+                  </View>
+                </View>
+
+                <Text style={{ fontSize: 14, color: colors.textSec, lineHeight: 22, marginBottom: 12 }}>
+                  {indianGuide.featured_festival.description}
+                </Text>
+
+                <View style={{ backgroundColor: colors.surface2, borderRadius: 16, padding: 14, gap: 8, marginBottom: 16, borderWidth: 1, borderColor: colors.line }}>
+                  {indianGuide.featured_festival.outfit_suggestion && (
+                    <Text style={{ fontSize: 13, color: colors.text, lineHeight: 20 }}>
+                      👗 <Text style={{ fontWeight: '700' }}>Traditional Outfit Idea:</Text> {indianGuide.featured_festival.outfit_suggestion}
+                    </Text>
+                  )}
+                  {indianGuide.featured_festival.date_idea && (
+                    <Text style={{ fontSize: 13, color: colors.text, lineHeight: 20 }}>
+                      💕 <Text style={{ fontWeight: '700' }}>Couple Celebration Idea:</Text> {indianGuide.featured_festival.date_idea}
+                    </Text>
+                  )}
+                </View>
+
+                <Pressable
+                  style={{ backgroundColor: '#F97316', borderRadius: 16, height: 48, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}
+                  onPress={() => {
+                    addFestivalToCalendar(indianGuide.featured_festival.name, indianGuide.featured_festival.date, indianGuide.featured_festival.emoji ?? '🪔');
+                    setShowFestGuideModal(false);
+                  }}
+                >
+                  <Ionicons name="calendar" size={18} color="#fff" />
+                  <Text style={{ color: '#fff', fontSize: 14, fontWeight: '800' }}>Add Event to Couple Calendar</Text>
+                </Pressable>
+              </View>
+            )}
+
+            {/* Upcoming Indian Festivals List */}
+            <Text style={{ fontSize: 11, fontWeight: '800', letterSpacing: 1.5, textTransform: 'uppercase', color: colors.muted, marginTop: 8 }}>
+              UPCOMING CELEBRATIONS
+            </Text>
+
+            {FESTIVALS.filter(f => new Date(f.date).getTime() >= Date.now() - 86400000).slice(0, 10).map((f, i) => (
+              <View key={i} style={{ backgroundColor: colors.surface, borderRadius: 18, padding: 16, borderWidth: 1, borderColor: colors.line, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 }}>
+                  <Text style={{ fontSize: 24 }}>{f.emoji}</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, fontWeight: '800', color: colors.text }}>{f.name}</Text>
+                    <Text style={{ fontSize: 12, color: colors.muted, marginTop: 2 }}>{f.date} · {f.greeting}</Text>
+                  </View>
+                </View>
+                <Pressable
+                  style={{ backgroundColor: colors.surface2, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1, borderColor: colors.line }}
+                  onPress={() => {
+                    addFestivalToCalendar(f.name, f.date, f.emoji);
+                  }}
+                >
+                  <Text style={{ fontSize: 12, fontWeight: '700', color: colors.rose }}>+ Calendar</Text>
+                </Pressable>
+              </View>
+            ))}
+          </ScrollView>
+        </SafeAreaView>
       </Modal>
 
       {/* Floating heart button */}

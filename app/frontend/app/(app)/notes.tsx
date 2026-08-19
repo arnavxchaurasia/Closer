@@ -106,12 +106,19 @@ export default function NotesScreen() {
       />
 
       {/* Header */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, paddingVertical: space.md, gap: space.md }}>
-        <Press haptic="light" onPress={() => router.back()} hitSlop={8} style={{ width: 40, height: 40, justifyContent: 'center' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, paddingVertical: space.md, gap: space.sm }}>
+        <Press haptic="light" onPress={() => router.back()} hitSlop={8} style={{ width: 40, height: 40, justifyContent: 'center', alignItems: 'center' }}>
           <Ionicons name="arrow-back" size={22} color={colors.text} />
         </Press>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 22, fontWeight: '900', color: colors.text, letterSpacing: -0.4 }}>Love Notes 💌</Text>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <Text 
+            style={{ fontSize: 22, fontWeight: '900', color: colors.text, letterSpacing: -0.4 }}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.85}
+          >
+            Love Notes 💌
+          </Text>
           <Text style={{ fontSize: 12, color: colors.muted, marginTop: 2 }}>
             {notes.length}/{MAX_NOTES} notes
           </Text>

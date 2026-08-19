@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { api } from '@/src/api';
+import { NotConnected } from '@/src/components/NotConnected';
 import { useAuth } from '@/src/context/AuthContext';
 import { useCouple } from '@/src/context/CoupleContext';
 import { useTheme } from '@/src/context/ThemeContext';
@@ -147,7 +148,7 @@ function ItemCard({ item, onLongPress, colors, s }: { item: ListItem; onLongPres
         <Image source={{ uri: item.image_url }} style={s.cardImg} />
       ) : (
         <LinearGradient
-          colors={['#1D1F2E', '#252739']}
+          colors={[colors.surface, colors.surface2]}
           style={s.cardGrad}
         >
           <Text style={s.cardEmojiTxt}>{item.emoji_cover ?? cat?.emoji ?? '✨'}</Text>
@@ -242,7 +243,7 @@ function AddModal({ visible, onClose, onSave, colors, s }: {
             <Image source={{ uri: fetchedImage }} style={s.previewImg} />
           )}
           {!fetchedImage && fetchedEmoji && !fetching && (
-            <LinearGradient colors={['#1D1F2E', '#252739']} style={s.previewEmoji}>
+            <LinearGradient colors={[colors.surface, colors.surface2]} style={s.previewEmoji}>
               <Text style={s.previewEmojiTxt}>{fetchedEmoji}</Text>
             </LinearGradient>
           )}
@@ -284,7 +285,7 @@ function AddModal({ visible, onClose, onSave, colors, s }: {
 export default function SharedListsScreen() {
   const { colors } = useTheme();
   const { user } = useAuth();
-  const { isPaired } = useCouple();
+  const { isPaired, isLoading: coupleLoading } = useCouple();
   const s = useMemo(() => makeStyles(colors), [colors]);
 
   const [items, setItems] = useState<ListItem[]>([]);
@@ -363,6 +364,9 @@ export default function SharedListsScreen() {
   }, [items, activeCategory, search]);
 
   const activeCat = CATEGORIES.find(c => c.key === activeCategory);
+
+  if (coupleLoading) return null;
+  if (!isPaired) return <NotConnected message="Shared lists need a partner. Connect to get started." />;
 
   return (
     <SafeAreaView style={s.root} edges={['top']}>
