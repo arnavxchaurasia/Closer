@@ -78,12 +78,20 @@ function RootNavigator() {
 
   const ready = (fontsLoaded || fontsError) && !isLoading;
 
+  // showLaunch stays true briefly after ready so the exit animation can play
+  const [showLaunch, setShowLaunch] = React.useState(true);
+  const [exiting, setExiting] = React.useState(false);
+
   useEffect(() => {
     if (ready) {
       SplashScreen.hideAsync();
       registerForPushNotifications().then(token => {
         if (token) scheduleDailyCheckIn().catch(() => {});
       }).catch(() => {});
+      // Trigger exit animation then unmount
+      setExiting(true);
+      const t = setTimeout(() => setShowLaunch(false), 900);
+      return () => clearTimeout(t);
     }
   }, [ready]);
 
@@ -103,16 +111,17 @@ function RootNavigator() {
     }
   }, [ready, user]);
 
-  if (!ready) return <LaunchScreen />;
-
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        animation: Platform.OS === 'ios' ? 'default' : 'fade',
-        gestureEnabled: true,
-      }}
-    />
+    <>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          animation: Platform.OS === 'ios' ? 'default' : 'fade',
+          gestureEnabled: true,
+        }}
+      />
+      {showLaunch && <LaunchScreen exiting={exiting} />}
+    </>
   );
 }
 
