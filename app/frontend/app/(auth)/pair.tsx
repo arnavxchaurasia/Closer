@@ -1,8 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import * as Clipboard from 'expo-clipboard';
-import { Alert, Image, Pressable, Share, Text, TextInput, View } from 'react-native';
+import { Alert, Clipboard, Image, Pressable, Share, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { api } from '@/src/api';
@@ -73,7 +72,7 @@ export default function PairScreen() {
     if (!myCode) return;
     haptics.light();
     const link = getShareableLink(myCode);
-    Clipboard.setStringAsync(link);
+    Clipboard.setString(link);
     sonner.show('Pairing link copied! 📋', 'Share it with your partner.');
   };
 
