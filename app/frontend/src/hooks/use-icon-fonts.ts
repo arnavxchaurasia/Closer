@@ -11,10 +11,29 @@ import { useFonts } from "expo-font";
 
 const ICON_VECTOR_VERSION = "15.1.1";
 
-// Only load fonts actually used in this app. Loading all families adds 10-15s
-// of CDN download time in Expo Go on every launch.
+// These CDN downloads only happen in Expo Go (StoreClient). EAS APK/IPA builds
+// bundle all @expo/vector-icons fonts via autolinking — useFonts({}) resolves
+// instantly in production so this map is never used.
 const ICON_FAMILIES: Record<string, string> = {
+  anticon: "AntDesign",
+  entypo: "Entypo",
+  evilicons: "EvilIcons",
+  feather: "Feather",
+  FontAwesome: "FontAwesome",
+  Fontisto: "Fontisto",
+  foundation: "Foundation",
   ionicons: "Ionicons",
+  "material-community": "MaterialCommunityIcons",
+  material: "MaterialIcons",
+  octicons: "Octicons",
+  "simple-line-icons": "SimpleLineIcons",
+  zocial: "Zocial",
+  "FontAwesome5Free-Regular": "FontAwesome5_Regular",
+  "FontAwesome5Free-Solid": "FontAwesome5_Solid",
+  "FontAwesome5Free-Brand": "FontAwesome5_Brands",
+  "FontAwesome6Free-Regular": "FontAwesome6_Regular",
+  "FontAwesome6Free-Solid": "FontAwesome6_Solid",
+  "FontAwesome6Free-Brand": "FontAwesome6_Brands",
 };
 
 const cdnUrl = (file: string): string =>

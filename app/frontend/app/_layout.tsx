@@ -79,7 +79,10 @@ function RootNavigator() {
   const ready = (fontsLoaded || fontsError) && !isLoading;
   const fontsReady = fontsLoaded || !!fontsError;
 
-  // showLaunch stays true briefly after ready so the exit animation can play
+  // LaunchScreen always plays for at least MIN_LAUNCH_MS so animations complete
+  const MIN_LAUNCH_MS = 2800;
+  const launchStart = React.useRef(Date.now());
+
   const [showLaunch, setShowLaunch] = React.useState(true);
   const [exiting, setExiting] = React.useState(false);
 
@@ -89,15 +92,18 @@ function RootNavigator() {
   }, [fontsReady]);
 
   useEffect(() => {
-    if (ready) {
-      registerForPushNotifications().then(token => {
-        if (token) scheduleDailyCheckIn().catch(() => {});
-      }).catch(() => {});
-      // Trigger exit animation then unmount
-      setExiting(true);
-      const t = setTimeout(() => setShowLaunch(false), 900);
-      return () => clearTimeout(t);
-    }
+    if (!ready) return;
+    registerForPushNotifications().then(token => {
+      if (token) scheduleDailyCheckIn().catch(() => {});
+    }).catch(() => {});
+
+    // Wait for minimum display time before starting exit animation
+    const elapsed = Date.now() - launchStart.current;
+    const delay = Math.max(0, MIN_LAUNCH_MS - elapsed);
+    const t1 = setTimeout(() => setExiting(true), delay);
+    // Unmount after exit animation (800ms) completes
+    const t2 = setTimeout(() => setShowLaunch(false), delay + 900);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [ready]);
 
   const initialRedirectDone = React.useRef(false);
