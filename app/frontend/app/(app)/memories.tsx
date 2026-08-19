@@ -204,7 +204,11 @@ export default function MemoriesScreen() {
 
   const grouped = useMemo(() => groupByYear(memories), [memories]);
 
-  if (coupleLoading) return null;
+  if (coupleLoading) return (
+    <View style={{ flex: 1, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center' }}>
+      <ActivityIndicator color={colors.rose} size="large" />
+    </View>
+  );
   if (!isPaired) return <NotConnected message="Memories are shared with your partner. Connect to get started." />;
 
   return (

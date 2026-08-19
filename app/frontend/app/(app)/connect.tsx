@@ -3,12 +3,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Animated, Easing, KeyboardAvoidingView, Platform, RefreshControl,
+  ActivityIndicator, Animated, Easing, KeyboardAvoidingView, Platform, RefreshControl,
   ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { api } from '@/src/api';
+import { NotConnected } from '@/src/components/NotConnected';
 import { Press } from '@/src/components/Press';
 import { useAuth } from '@/src/context/AuthContext';
 import { useCouple } from '@/src/context/CoupleContext';
@@ -702,7 +703,7 @@ function useStyles(c: Colors) {
 export default function ConnectScreen() {
   const { colors } = useTheme();
   const { user } = useAuth();
-  const { partner } = useCouple();
+  const { partner, isPaired, isLoading: coupleLoading } = useCouple();
   const [refreshing, setRefreshing] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -715,6 +716,13 @@ export default function ConnectScreen() {
     setRefreshKey(k => k + 1);
     setTimeout(() => setRefreshing(false), 800);
   };
+
+  if (coupleLoading) return (
+    <View style={{ flex: 1, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center' }}>
+      <ActivityIndicator color={colors.rose} size="large" />
+    </View>
+  );
+  if (!isPaired) return <NotConnected message="Connect with your partner to use the Connect board." />;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top', 'bottom']}>

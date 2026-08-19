@@ -131,7 +131,7 @@ export default function NotificationsScreen() {
             const emoji = getNotificationEmoji(item.title);
             const badgeColor = getNotificationColor(item.title);
             return (
-              <View style={[s.notiRow, { borderColor: colors.line, backgroundColor: item.read ? colors.surface : colors.surface }]}>
+              <View style={[s.notiRow, { borderColor: colors.line, backgroundColor: item.read ? colors.surface : colors.surface2 }]}>
                 {/* Badge Icon */}
                 <View style={[s.badge, { backgroundColor: `${badgeColor}12` }]}>
                   <Text style={{ fontSize: 20 }}>{emoji}</Text>

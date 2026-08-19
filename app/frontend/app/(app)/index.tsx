@@ -1519,10 +1519,10 @@ export default function HomeScreen() {
               placeholder="Something you want them to remember…" placeholderTextColor={colors.muted}
             />
             <Pressable
-              style={{ backgroundColor: colors.text, borderRadius: 20, height: 50, alignItems: 'center', justifyContent: 'center', marginTop: 16, opacity: savingNote || !noteText.trim() ? 0.5 : 1 }}
+              style={{ backgroundColor: colors.rose, borderRadius: 20, height: 50, alignItems: 'center', justifyContent: 'center', marginTop: 16, opacity: savingNote || !noteText.trim() ? 0.5 : 1 }}
               onPress={saveNote} disabled={savingNote || !noteText.trim()}
-             
             >
+              <Text style={{ color: '#fff', fontWeight: '700', fontSize: 16 }}>Send Note</Text>
             </Pressable>
           </Pressable>
         </Pressable>

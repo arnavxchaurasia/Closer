@@ -191,7 +191,7 @@ export default function TripPlannerScreen() {
   return (
     <SafeAreaView style={[s.root, { backgroundColor: colors.bg }]} edges={['top', 'bottom']}>
       {/* Header */}
-      <View style={s.header}>
+      <View style={[s.header, { borderBottomColor: colors.line }]}>
         <Press haptic="light" onPress={() => router.back()} style={s.backBtn}>
           <Ionicons name="arrow-back" size={22} color={colors.text} />
         </Press>
@@ -371,7 +371,7 @@ export default function TripPlannerScreen() {
 
 const s = StyleSheet.create({
   root: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, paddingVertical: space.md, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'rgba(0,0,0,0.1)' },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space.lg, paddingVertical: space.md, borderBottomWidth: StyleSheet.hairlineWidth },
   backBtn: { width: 40, height: 40, justifyContent: 'center' },
   addBtn: { width: 40, height: 40, alignItems: 'flex-end', justifyContent: 'center' },
   title: { fontSize: 18, fontWeight: '800' },
@@ -386,7 +386,7 @@ const s = StyleSheet.create({
   nextTag: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 3, borderRadius: radius.md, marginBottom: 8 },
   nextTagText: { fontSize: 9, fontWeight: '900', color: '#fff' },
   modalBg: { flex: 1 },
-  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: space.lg, borderBottomWidth: 1, borderBottomColor: 'rgba(0,0,0,0.05)' },
+  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: space.lg, borderBottomWidth: 1 },
   modalHeaderTitle: { fontSize: 18, fontWeight: '800' },
   fLabel: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
   fInput: { height: 48, borderRadius: radius.md, borderWidth: 1, paddingHorizontal: space.md, fontSize: 15 },

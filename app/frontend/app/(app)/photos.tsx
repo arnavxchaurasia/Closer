@@ -3,7 +3,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import {
-  Alert, Dimensions, FlatList, Image, Modal,
+  ActivityIndicator, Alert, Dimensions, FlatList, Image, Modal,
   Pressable, StyleSheet, Text, View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -35,8 +35,6 @@ export default function PhotosScreen() {
   const { colors } = useTheme();
   const { user } = useAuth();
   const { isPaired, isLoading: coupleLoading } = useCouple();
-  if (coupleLoading) return null;
-  if (!isPaired) return <NotConnected message="Photos are shared with your partner. Connect to get started." />;
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -105,6 +103,13 @@ export default function PhotosScreen() {
   };
 
   const isMyPhoto = (photo: Photo) => photo.uploaded_by === user?.user_id;
+
+  if (coupleLoading) return (
+    <View style={{ flex: 1, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center' }}>
+      <ActivityIndicator color={colors.rose} size="large" />
+    </View>
+  );
+  if (!isPaired) return <NotConnected message="Photos are shared with your partner. Connect to get started." />;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top', 'bottom']}>

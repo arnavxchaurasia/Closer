@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Clipboard, Image, Pressable, Share, Text, TextInput, View } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import { Alert, Image, Pressable, Share, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { api } from '@/src/api';
@@ -49,7 +50,7 @@ export default function PairScreen() {
   };
 
   const getShareableLink = (inviteCode: string) => {
-    return `https://soulsync.app/pair?code=${inviteCode}`;
+    return `https://ourspace.app/pair?code=${inviteCode}`;
   };
 
   const shareInviteLink = async () => {
@@ -72,7 +73,7 @@ export default function PairScreen() {
     if (!myCode) return;
     haptics.light();
     const link = getShareableLink(myCode);
-    Clipboard.setString(link);
+    Clipboard.setStringAsync(link);
     sonner.show('Pairing link copied! 📋', 'Share it with your partner.');
   };
 
