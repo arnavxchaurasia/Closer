@@ -449,10 +449,10 @@ export default function HealthScreen() {
                     {[1, 5, 10].map(val => {
                       const y = paddingTop + ((10 - val) / (10 - 1)) * (chartHeight - paddingTop - paddingBottom);
                       return (
-                        <View key={val}>
+                        <React.Fragment key={val}>
                           <Line x1={paddingLeft} y1={y} x2={chartWidth - paddingRight} y2={y} stroke={colors.line} strokeWidth={1} strokeDasharray="3,3" />
                           <SvgText x={paddingLeft - 8} y={y + 4} fill={colors.muted} fontSize={10} textAnchor="end">{val}</SvgText>
-                        </View>
+                        </React.Fragment>
                       );
                     })}
 

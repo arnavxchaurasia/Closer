@@ -175,6 +175,7 @@ export default function SavingsScreen() {
       // Refresh to load latest contributions list from DB
       load();
       setShowContribModal(false);
+      setContribAmount('');
       haptics.success();
     } catch { haptics.error(); }
     finally { setContributing(false); }

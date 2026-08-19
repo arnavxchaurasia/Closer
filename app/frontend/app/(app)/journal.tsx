@@ -256,7 +256,7 @@ export default function JournalScreen() {
       )}
 
       {/* Journal Modal */}
-      <Modal visible={showModal} animationType="slide" presentationStyle="pageSheet">
+      <Modal visible={showModal} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setShowModal(false)}>
         <SafeAreaView style={s.modalBg}>
           <ScrollView contentContainerStyle={{ padding: space.lg, gap: space.md }} keyboardShouldPersistTaps="handled">
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: space.md }}>
@@ -318,7 +318,7 @@ export default function JournalScreen() {
       </Modal>
 
       {/* Dream Modal */}
-      <Modal visible={showDreamModal} animationType="slide" presentationStyle="pageSheet">
+      <Modal visible={showDreamModal} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setShowDreamModal(false)}>
         <SafeAreaView style={s.modalBg}>
           <ScrollView contentContainerStyle={{ padding: space.lg, gap: space.md }} keyboardShouldPersistTaps="handled">
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: space.md }}>

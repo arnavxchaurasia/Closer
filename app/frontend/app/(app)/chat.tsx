@@ -1012,7 +1012,7 @@ export default function ChatScreen() {
           <>
             <View style={[s.avatar, { backgroundColor: colors.roseDim, borderColor: colors.rose }]}>
               {partner?.avatar_url
-                ? <Image source={{ uri: partner.avatar_url }} style={{ width: 40, height: 40, borderRadius: 20 }} />
+                ? <Image source={{ uri: partner.avatar_url }} style={{ width: 40, height: 40, borderRadius: 20 }} onError={() => {}} />
                 : <Text style={{ fontSize: 18, fontWeight: '900', color: colors.rose }}>{(partnerName[0] ?? '?').toUpperCase()}</Text>
               }
             </View>
@@ -1061,7 +1061,7 @@ export default function ChatScreen() {
                 </View>
               </View>
               <Pressable
-                style={{ backgroundColor: '#F97316', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 6 }}
+                style={{ backgroundColor: colors.rose, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 6 }}
                 onPress={() => router.push('/(app)/calendar' as any)}
               >
                 <Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>Calendar 📅</Text>
@@ -1074,9 +1074,9 @@ export default function ChatScreen() {
 
       {/* ── Offline banner ── */}
       {hasOfflineBanner && (
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: '#92400E', paddingVertical: 6 }}>
-          <Ionicons name="cloud-offline-outline" size={14} color="#FCD34D" />
-          <Text style={{ fontSize: 12, fontWeight: '700', color: '#FCD34D' }}>Offline — showing cached messages</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: colors.surface2, paddingVertical: 6 }}>
+          <Ionicons name="cloud-offline-outline" size={14} color={colors.textSec} />
+          <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textSec }}>Offline — showing cached messages</Text>
         </View>
       )}
 

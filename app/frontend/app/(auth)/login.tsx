@@ -100,7 +100,7 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <ScrollView
           contentContainerStyle={{ padding: space.lg, flexGrow: 1, justifyContent: 'center', paddingTop: 40, paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled"
@@ -108,7 +108,7 @@ export default function LoginScreen() {
         >
           {/* Back */}
           <FadeSlide delay={0}>
-            <Press haptic="light" onPress={() => router.back()} style={{ width: 40, height: 40, justifyContent: 'center', marginBottom: space.lg }}>
+            <Press haptic="light" onPress={() => { if (router.canGoBack()) router.back(); else router.replace('/(auth)'); }} style={{ width: 40, height: 40, justifyContent: 'center', marginBottom: space.lg }}>
               <Text style={{ fontSize: 24, color: colors.text }}>←</Text>
             </Press>
           </FadeSlide>

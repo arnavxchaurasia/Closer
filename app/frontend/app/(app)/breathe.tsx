@@ -109,7 +109,7 @@ export default function BreatheScreen() {
   return (
     <View style={[s.container, { backgroundColor: colors.bg }]}>
       <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
-        <Pressable onPress={() => router.back()} style={s.back} hitSlop={8}>
+        <Pressable onPress={() => router.back()} style={s.back} hitSlop={8} accessibilityLabel="Go back">
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </Pressable>
 

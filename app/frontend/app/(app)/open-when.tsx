@@ -282,7 +282,9 @@ export default function OpenWhenScreen() {
             </Pressable>
             <Text style={s.readEyebrow}>Open when…</Text>
             <Text style={s.readLabel}>{showLetter?.label}</Text>
-            <Text style={s.readContent}>{showLetter?.content}</Text>
+            <ScrollView style={{ maxHeight: 300 }} showsVerticalScrollIndicator>
+              <Text style={s.readContent}>{showLetter?.content}</Text>
+            </ScrollView>
             <Text style={s.readDate}>
               {showLetter?.created_at ? formatDate(showLetter.created_at) : ''}
             </Text>

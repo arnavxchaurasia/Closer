@@ -200,7 +200,7 @@ export default function PairScreen() {
                   Create a shareable invite link
                 </Text>
                 <Text style={{ fontSize: 14, color: colors.textSec, textAlign: 'center', paddingHorizontal: space.md, lineHeight: 20 }}>
-                  Generate a private pairing link to send to your girl. When she taps it, her app automatically connects!
+                  Generate a private pairing link to send to your partner. When they tap it, their app automatically connects!
                 </Text>
               </>
             )}

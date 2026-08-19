@@ -167,7 +167,7 @@ function TickNum({ value, unit }: { value: number; unit: string }) {
 
 export default function CoupleProfileScreen() {
   const { colors, isDark } = useTheme();
-  const { user, refresh: refreshUser } = useAuth() as any;
+  const { user, updateUser } = useAuth();
   const { partner, couple } = useCouple();
   const { myNickname, partnerNickname } = useNicknames(user?.name, partner?.name);
 
@@ -265,12 +265,12 @@ export default function CoupleProfileScreen() {
     try {
       await api.put('/api/profile', {
         name: name.trim(),
-        city: city.trim() || null,
+        location_city: city.trim() || null,
         bio: bio.trim() || null,
         birthday: birthday.trim() || null,
         avatar_url: avatarUri ?? undefined,
       });
-      if (typeof refreshUser === 'function') await refreshUser().catch(() => {});
+      updateUser({ name: name.trim(), location_city: city.trim() || undefined, bio: bio.trim() || undefined, birthday: birthday.trim() || undefined, avatar_url: avatarUri ?? undefined });
       haptics.success();
       Alert.alert('Success', 'Profile updated successfully.');
     } catch (e: any) {

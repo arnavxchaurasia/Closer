@@ -280,7 +280,7 @@ export default function HomeScreen() {
     if (!isPaired) {
       haptics.select();
       sonner.show('Connect with Partner 💕', 'Pair your accounts first to send love thinking of you!');
-      router.push('/(auth)/pair' as any);
+      router.replace('/(auth)/pair');
       return;
     }
     setSendingThinking(true);

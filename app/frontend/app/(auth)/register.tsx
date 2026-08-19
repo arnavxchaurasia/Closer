@@ -116,9 +116,9 @@ export default function RegisterScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={{ padding: space.lg, flexGrow: 1, paddingBottom: 40 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-          <Press haptic="light" onPress={() => router.back()} style={{ width: 40, height: 40, justifyContent: 'center', marginBottom: space.md }}>
+          <Press haptic="light" onPress={() => { if (router.canGoBack()) router.back(); else router.replace('/(auth)'); }} style={{ width: 40, height: 40, justifyContent: 'center', marginBottom: space.md }}>
             <Text style={{ fontSize: 24, color: colors.text }}>←</Text>
           </Press>
 

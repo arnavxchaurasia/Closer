@@ -226,7 +226,7 @@ export default function TimeCapsuleScreen() {
                       FROM YOUR PAST SELVES
                     </Text>
                     {item.media_url && (
-                      <Image source={{ uri: item.media_url }} style={{ width: '100%', height: 180, borderRadius: radius.md, marginBottom: space.sm }} resizeMode="cover" />
+                      <Image source={{ uri: item.media_url }} style={{ width: '100%', height: 180, borderRadius: radius.md, marginBottom: space.sm }} resizeMode="cover" onError={() => {}} />
                     )}
                     {item.message ? (
                       <Text style={[s.messageText, { color: colors.text }]}>

@@ -140,7 +140,7 @@ export default function HeartbeatScreen() {
           ))}
 
           {/* Heart */}
-          <Pressable onPress={sendTap} style={s.heartBtn}>
+          <Pressable onPress={sendTap} style={s.heartBtn} accessibilityLabel="Send heartbeat tap to partner">
             <Animated.Text style={[s.heart, { transform: [{ scale: heartScale }] }]}>
               💗
             </Animated.Text>

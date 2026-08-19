@@ -259,7 +259,7 @@ export default function SnapsScreen() {
             <Text style={{ fontSize: 44, marginBottom: 12 }}>👻</Text>
             <Text style={{ fontSize: 16, fontWeight: '700', color: colors.text, marginBottom: 6 }}>No snaps yet</Text>
             <Text style={{ fontSize: 14, color: colors.muted, textAlign: 'center' }}>
-              Send {partnerName} a snap first — they'll get a notification.
+              Send {partnerName} a snap first — they&apos;ll get a notification.
             </Text>
           </View>
         ) : (
@@ -268,7 +268,7 @@ export default function SnapsScreen() {
               <View style={{ backgroundColor: colors.surface, borderRadius: 18, overflow: 'hidden', borderWidth: 1.5, borderColor: colors.rose + '66' }}>
                 {/* Thumbnail blurred preview */}
                 <View style={{ height: 80, overflow: 'hidden' }}>
-                  <Image source={{ uri: snap.photo_url }} style={{ width: '100%', height: '100%' }} blurRadius={12} resizeMode="cover" />
+                  <Image source={{ uri: snap.photo_url }} style={{ width: '100%', height: '100%' }} blurRadius={12} resizeMode="cover" onError={() => {}} />
                   <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.35)', alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{ fontSize: 28 }}>👆</Text>
                     <Text style={{ color: '#fff', fontWeight: '800', fontSize: 13, marginTop: 4 }}>Tap to open</Text>
@@ -310,7 +310,7 @@ export default function SnapsScreen() {
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text, marginBottom: 2 }}>Device gallery</Text>
-                <Text style={{ fontSize: 12, color: colors.muted }}>Choose from your phone's photos</Text>
+                <Text style={{ fontSize: 12, color: colors.muted }}>Choose from your phone&apos;s photos</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color={colors.muted} />
             </Pressable>

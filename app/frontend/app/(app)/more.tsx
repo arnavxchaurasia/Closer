@@ -29,7 +29,7 @@ import { Colors, radius, space } from '@/src/theme';
 
 type SharingSettings = { calendar?: string; journal?: string; mood?: string };
 
-const NOTIF_PREFS_KEY = '@soulsync_notif_prefs';
+const NOTIF_PREFS_KEY = '@ourspace_notif_prefs';
 
 type NotifPrefs = {
   messages: boolean;
@@ -337,7 +337,7 @@ export default function SettingsScreen() {
           </Pressable>
           <Pressable
             style={[s.rowItem, { marginTop: space.xs, borderColor: colors.roseDim }]}
-            onPress={() => router.push('/onboarding' as any)}
+            onPress={() => router.replace('/(app)/onboarding')}
           >
             <Ionicons name="sparkles-outline" size={20} color={colors.rose} />
             <Text style={[s.rowLbl, { flex: 1, marginLeft: space.md }]}>View Onboarding Showcase 🚀</Text>
@@ -356,10 +356,17 @@ export default function SettingsScreen() {
                 </View>
                 <View style={{ flex: 1, marginLeft: space.md }}>
                   <Text style={s.name}>{partner.name}</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 3 }}>
-                    <View style={s.onlineDot} />
-                    <Text style={{ fontSize: 12, color: colors.muted }}>Connected</Text>
-                  </View>
+                  {(() => {
+                    const isPartnerOnline = partner?.last_active
+                      ? (Date.now() - new Date(partner.last_active).getTime()) < 5 * 60 * 1000
+                      : false;
+                    return (
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 3 }}>
+                        {isPartnerOnline && <View style={s.onlineDot} />}
+                        <Text style={{ fontSize: 12, color: colors.muted }}>{isPartnerOnline ? 'Active now' : 'Connected'}</Text>
+                      </View>
+                    );
+                  })()}
                 </View>
               </View>
               <Pressable style={[s.rowItem, { marginTop: space.sm, borderColor: colors.roseDim }]} onPress={() => router.push('/(app)/couple-profile')}>

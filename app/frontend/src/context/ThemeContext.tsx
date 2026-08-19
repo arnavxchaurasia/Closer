@@ -26,7 +26,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<ThemeMode>('light');
 
   useEffect(() => {
-    AsyncStorage.getItem('@soulsync/theme').then(v => {
+    AsyncStorage.getItem('@ourspace/theme').then(v => {
       if (v === 'light' || v === 'dark') setMode(v);
     }).catch(() => {});
   }, []);
@@ -34,7 +34,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const toggleTheme = () => {
     setMode(prev => {
       const next = prev === 'dark' ? 'light' : 'dark';
-      AsyncStorage.setItem('@soulsync/theme', next).catch(() => {});
+      AsyncStorage.setItem('@ourspace/theme', next).catch(() => {});
       return next;
     });
   };

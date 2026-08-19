@@ -143,7 +143,7 @@ function ItemCard({ item, onLongPress, colors, s }: { item: ListItem; onLongPres
   const cat = CATEGORIES.find(c => c.key === item.category);
 
   return (
-    <Pressable style={s.card} onLongPress={onLongPress} delayLongPress={400}>
+    <Pressable style={s.card} onPress={onLongPress} onLongPress={onLongPress} delayLongPress={400} android_ripple={{ color: 'rgba(255,255,255,0.08)' }}>
       {item.image_url ? (
         <Image source={{ uri: item.image_url }} style={s.cardImg} />
       ) : (
