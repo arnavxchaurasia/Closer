@@ -13,7 +13,8 @@ import { ThemeProvider } from '@/src/context/ThemeContext';
 import { useIconFonts } from '@/src/hooks/use-icon-fonts';
 import { registerForPushNotifications, scheduleDailyCheckIn } from '@/src/notifications';
 
-SplashScreen.preventAutoHideAsync();
+// Hide the native splash immediately — custom LaunchScreen is the intro experience
+SplashScreen.hideAsync().catch(() => {});
 
 // Keep native confirmation dialogs (which require a decision), but replace
 // informational alerts everywhere with unobtrusive Sonner-style notifications.
@@ -77,7 +78,6 @@ function RootNavigator() {
   const [fontsLoaded, fontsError] = useIconFonts();
 
   const ready = (fontsLoaded || fontsError) && !isLoading;
-  const fontsReady = fontsLoaded || !!fontsError;
 
   // LaunchScreen always plays for at least MIN_LAUNCH_MS so animations complete
   const MIN_LAUNCH_MS = 2800;
@@ -86,10 +86,6 @@ function RootNavigator() {
   const [showLaunch, setShowLaunch] = React.useState(true);
   const [exiting, setExiting] = React.useState(false);
 
-  // Hide native splash as soon as fonts load — don't wait for auth
-  useEffect(() => {
-    if (fontsReady) SplashScreen.hideAsync();
-  }, [fontsReady]);
 
   useEffect(() => {
     if (!ready) return;
